@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.developer.nfc.readersession.iso7816.select-identifiers</key>
+	<array>
+		<string>315449432e494341</string>
+		<string>334d54522e494341</string>
+		<string>5041592e535a54</string>
+		<string>A00000000386980701</string>
+		<string>A000000632010105</string>
+		<string>d4100000030001</string>
+		<string>d4100000140001</string>
+		<string>d4100000300001</string>
+		<string>d4106509900020</string>
+		<string>a0000004520001</string>
+		<string>4150312e5748435443</string>
+		<string>A000000476416E64726F6964484345</string>
+		<string>a0000004040125090101000000000000</string>
+	</array>
+</dict>
+</plist>

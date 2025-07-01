@@ -1,0 +1,15 @@
+{
+  "originHash" : "ce66a652b0895e9408526f995d48f32b940a2539602d5e0b5938620a107eb34b",
+  "pins" : [
+    {
+      "identity" : "isocountrycodes",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/funky-monkey/IsoCountryCodes",
+      "state" : {
+        "revision" : "c571f2133f32d56f6ef4af0d210bd1fc7adf6a02",
+        "version" : "1.0.2"
+      }
+    }
+  ],
+  "version" : 3
+}
