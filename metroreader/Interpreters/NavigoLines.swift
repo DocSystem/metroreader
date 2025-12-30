@@ -12,6 +12,7 @@ public struct NavigoLineInfo: Codable {
     let provider_id: Int
     let id: Int
     let mode: String
+    let is_noctilien: Bool
 }
 
 public class NavigoLines {

@@ -12,15 +12,15 @@ struct EnvHolderView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("App Version: \(interpretAppVersionNumber(getKey(envHolderInfo, "EnvApplicationVersionNumber") ?? ""))")
-            Text("Country: \(interpretNetworkId(getKey(envHolderInfo, "EnvNetworkId") ?? "").0)")
-            Text("Network: \(interpretNetworkId(getKey(envHolderInfo, "EnvNetworkId") ?? "").1)")
-            Text("Expiration Date: \(interpretDate(getKey(envHolderInfo, "EnvApplicationValidityEndDate") ?? ""))")
+            Text("Version de l'app : \(interpretAppVersionNumber(getKey(envHolderInfo, "EnvApplicationVersionNumber") ?? ""))")
+            Text("Pays : \(interpretNetworkId(getKey(envHolderInfo, "EnvNetworkId") ?? "").0)")
+            Text("Réseau : \(interpretNetworkId(getKey(envHolderInfo, "EnvNetworkId") ?? "").1)")
+            Text("Date d'expiration : \(interpretDate(getKey(envHolderInfo, "EnvApplicationValidityEndDate") ?? ""))")
             if let holderCardStatus = getKey(envHolderInfo, "HolderDataCardStatus") {
-                Text("Card status: \(interpretPersonalizationStatusCode(holderCardStatus).0)")
+                Text("Type de carte : \(interpretPersonalizationStatusCode(holderCardStatus).0)")
             }
             if let holderCommercialId = getKey(envHolderInfo, "HolderDataCommercialID") {
-                Text("Commercial ID: \(interpretNavigoCommercialId(holderCommercialId))")
+                Text("Type commercial : \(interpretNavigoCommercialId(holderCommercialId))")
             }
         }
     }

@@ -17,6 +17,7 @@ struct EventView: View {
     let eventRouteName: String?
     let eventTransportMode: String
     let eventTransition: String
+    let eventRouteData: NavigoLineInfo?
     
     @State private var region: MKCoordinateRegion
     @State private var cityName: String = "Loading..."
@@ -55,6 +56,13 @@ struct EventView: View {
                 finalRouteName = self.eventLocation.lines.first!.name
             }
         }
+        
+        self.eventRouteData = NavigoLines.find(Int(getKey(eventInfo, "EventServiceProvider") ?? "", radix: 2) ?? 0, self.eventRouteNumber ?? 0, finalMode)
+        
+        if self.eventRouteData?.is_noctilien == true {
+            finalMode = "Noctilien"
+        }
+        
         self.eventTransportMode = finalMode
         self.eventRouteName = finalRouteName
         
