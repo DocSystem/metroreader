@@ -78,13 +78,17 @@ public class NavigoStations {
     }()
     
     public class func find(_ provider: Int, _ group: Int, _ id: Int, _ sub: Int, _ mode: String) -> NavigoStationInfo? {
+        var modeToUse = mode
+        if (mode == "RER") {
+            modeToUse = "Train"
+        }
         if (provider == 2) { // Map SNCF Provider
-            return allStations.first { $0.provider_id == 1 && $0.group == group && $0.id == id && $0.sub == sub && $0.mode == mode }
+            return allStations.first { $0.provider_id == 1 && $0.group == group && $0.id == id && $0.sub == sub && $0.mode == modeToUse }
         }
         else if (provider == 3) { // Map RATP Provider
-            return allStations.first { $0.provider_id == 59 && $0.group == group && $0.id == id && $0.sub == sub && $0.mode == mode }
+            return allStations.first { $0.provider_id == 59 && $0.group == group && $0.id == id && $0.sub == sub && $0.mode == modeToUse }
         }
-        if let station = allStations.first(where: { $0.provider_id == provider && $0.group == group && $0.id == id && $0.sub == sub && $0.mode == mode }) {
+        if let station = allStations.first(where: { $0.provider_id == provider && $0.group == group && $0.id == id && $0.sub == sub && $0.mode == modeToUse }) {
             return station
         }
         return allStations.first { $0.group == group && $0.id == id && $0.sub == sub }

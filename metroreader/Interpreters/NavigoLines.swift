@@ -29,6 +29,9 @@ public class NavigoLines {
     }()
 
     public class func find(_ provider: Int, _ id: Int, _ mode: String) -> NavigoLineInfo? {
-        return allLines.first { $0.provider_id == provider && $0.id == id && $0.mode == mode }
+        if let line = allLines.first(where: { $0.provider_id == provider && $0.id == id && $0.mode == mode }) {
+            return line
+        }
+        return allLines.first { $0.provider_id == provider && $0.id == (id >> 8) && $0.mode == mode }
     }
 }

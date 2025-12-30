@@ -23,7 +23,8 @@ struct EventView: View {
         let eventLocationId = getKey(eventInfo, "EventLocationId") ?? ""
         let eventCode = getKey(eventInfo, "EventCode") ?? ""
         let eventServiceProvider = getKey(eventInfo, "EventServiceProvider") ?? ""
-        let location = interpretLocationId(eventLocationId, eventCode, eventServiceProvider)
+        let eventRouteNumber = getKey(eventInfo, "EventRouteNumber")
+        let location = interpretLocationId(eventLocationId, eventCode, eventServiceProvider, eventRouteNumber)
         
         _location = State(initialValue: location)
         
@@ -38,7 +39,7 @@ struct EventView: View {
             Section {
                 VStack(alignment: .center, spacing: 8) {
                     if location.found {
-                        Text("\(interpretLocationId(getKey(eventInfo, "EventLocationId") ?? "", getKey(eventInfo, "EventCode") ?? "", getKey(eventInfo, "EventServiceProvider") ?? "").name)")
+                        Text("\(interpretLocationId(getKey(eventInfo, "EventLocationId") ?? "", getKey(eventInfo, "EventCode") ?? "", getKey(eventInfo, "EventServiceProvider") ?? "", getKey(eventInfo, "EventRouteNumber")).name)")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .multilineTextAlignment(.center)
@@ -154,7 +155,7 @@ struct EventView: View {
             if location.found {
                 Section {
                     Map(initialPosition: .region(region)) {
-                        Marker(interpretLocationId(getKey(eventInfo, "EventLocationId") ?? "", getKey(eventInfo, "EventCode") ?? "", getKey(eventInfo, "EventServiceProvider") ?? "").name, systemImage: getTransitIcon(getKey(eventInfo, "EventCode") ?? ""), coordinate: region.center)
+                        Marker(interpretLocationId(getKey(eventInfo, "EventLocationId") ?? "", getKey(eventInfo, "EventCode") ?? "", getKey(eventInfo, "EventServiceProvider") ?? "", getKey(eventInfo, "EventRouteNumber")).name, systemImage: getTransitIcon(getKey(eventInfo, "EventCode") ?? ""), coordinate: region.center)
                     }
                     .frame(height: 200)
                     Text(cityName)
