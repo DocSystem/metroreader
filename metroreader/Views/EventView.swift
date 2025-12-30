@@ -46,7 +46,7 @@ struct EventView: View {
                             .frame(maxWidth: .infinity, alignment: .center)
                         
                         HStack(spacing: 0) {
-                            Text("\(interpretEventCode(getKey(eventInfo, "EventCode") ?? "", isRouteNumberPresent: getKey(eventInfo, "EventRouteNumber") != nil).0)")
+                            Text("\(interpretEventCode(getKey(eventInfo, "EventCode") ?? "", isRouteNumberPresent: getKey(eventInfo, "EventRouteNumber") != nil, routeNumber: Int(getKey(eventInfo, "EventRouteNumber") ?? "") ?? nil).0)")
                                 .font(.system(size: 18, weight: .medium))
                                 .foregroundColor(.gray)
                             if let eventRouteNumber = getKey(eventInfo, "EventRouteNumber") {

@@ -12,7 +12,7 @@ struct EventPreview: View {
     
     var body: some View {
         HStack {
-            EventIcon(eventTransportMode: interpretEventCode(getKey(eventInfo, "EventCode") ?? "", isRouteNumberPresent: getKey(eventInfo, "EventRouteNumber") != nil).0, eventTransition: interpretEventCode(getKey(eventInfo, "EventCode") ?? "").1)
+            EventIcon(eventTransportMode: interpretEventCode(getKey(eventInfo, "EventCode") ?? "", isRouteNumberPresent: getKey(eventInfo, "EventRouteNumber") != nil, routeNumber: Int(getKey(eventInfo, "EventRouteNumber") ?? "") ?? nil).0, eventTransition: interpretEventCode(getKey(eventInfo, "EventCode") ?? "").1)
             VStack(alignment: .leading) {
                 if interpretLocationId(getKey(eventInfo, "EventLocationId") ?? "", getKey(eventInfo, "EventCode") ?? "", getKey(eventInfo, "EventServiceProvider") ?? "", getKey(eventInfo, "EventRouteNumber")).found {
                     Text("\(interpretLocationId(getKey(eventInfo, "EventLocationId") ?? "", getKey(eventInfo, "EventCode") ?? "", getKey(eventInfo, "EventServiceProvider") ?? "", getKey(eventInfo, "EventRouteNumber")).name)")

@@ -237,6 +237,8 @@ func interpretServiceProvider(_ bitstring: String) -> String {
         return "RATP Cap Bièvre";
     case 8:
         return "ORA";
+    case 12:
+        return "Keolis";
     case 14:
         return "LUG - Paris";
     case 17:
