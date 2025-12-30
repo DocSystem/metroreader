@@ -7,6 +7,13 @@
 
 import Foundation
 
+public struct NavigoStationInfoLines: Codable {
+    let name: String
+    let mode: String
+    let background_color: String
+    let text_color: String
+}
+
 public struct NavigoStationInfo: Codable {
     let name: String
     let provider_id: Int
@@ -16,10 +23,11 @@ public struct NavigoStationInfo: Codable {
     let mode: String
     let lat: Double
     let long: Double
+    let lines: [NavigoStationInfoLines]
     let found: Bool
     
     enum CodingKeys: String, CodingKey {
-        case name, provider_id, group, id, sub, mode, lat, long
+        case name, provider_id, group, id, sub, mode, lat, long, lines
         // omit 'found' if it's not in the JSON file
     }
     
@@ -33,6 +41,7 @@ public struct NavigoStationInfo: Codable {
         self.mode = try container.decode(String.self, forKey: .mode)
         self.lat = try container.decode(Double.self, forKey: .lat)
         self.long = try container.decode(Double.self, forKey: .long)
+        self.lines = try container.decode([NavigoStationInfoLines].self, forKey: .lines)
         
         // Default to true when decoding from JSON
         self.found = true
@@ -47,6 +56,7 @@ public struct NavigoStationInfo: Codable {
         self.mode = mode
         self.lat = lat
         self.long = long
+        self.lines = []
         self.found = true
     }
     
@@ -59,6 +69,7 @@ public struct NavigoStationInfo: Codable {
         self.mode = mode
         self.lat = lat
         self.long = long
+        self.lines = []
         self.found = found
     }
 }

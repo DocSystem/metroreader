@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct EventIcon: View {
-    let eventTransportMode: String
+    var eventTransportMode: String
     let eventTransition: String
     
     var body: some View {
@@ -16,6 +16,11 @@ struct EventIcon: View {
             switch (eventTransportMode) {
             case "Bus urbain":
                 Image("mode_bus")
+                    .resizable(resizingMode: .stretch)
+                    .padding(.all, 8.0)
+                    .colorInvert()
+            case "Noctilien":
+                Image("mode_noctilien")
                     .resizable(resizingMode: .stretch)
                     .padding(.all, 8.0)
                     .colorInvert()
@@ -31,6 +36,11 @@ struct EventIcon: View {
                     .colorInvert()
             case "RER":
                 Image("mode_rer")
+                    .resizable(resizingMode: .stretch)
+                    .padding(.all, 8.0)
+                    .colorInvert()
+            case "Train / RER":
+                Image("mode_train_rer")
                     .resizable(resizingMode: .stretch)
                     .padding(.all, 8.0)
                     .colorInvert()

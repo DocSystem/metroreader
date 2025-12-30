@@ -59,6 +59,8 @@ func interpretTariff(_ bitstring: String) -> String {
         return "Imagine R Étudiant"
     case 0x000D:
         return "Navigo Jeunes Week-end"
+    case 0x000E:
+        return "Navigo JOP"
     case 0x0015:
         return "Paris - Visite"
     case 0x1000:
@@ -170,12 +172,11 @@ func interpretRouteNumber(_ routeNumberBitstring: String, _ eventCodeBitstring: 
         else if routeNumber == 18 {
             return "B"
         }
-        else if routeNumber == 29 {
-            return "Orlyval"
-        }
     }
     if (eventTransport == "Métro") {
         switch routeNumber {
+        case 29:
+            return "Orlyval"
         case 103:
             return "3 bis"
         case 107:
@@ -283,14 +284,13 @@ func interpretLocationId(_ locationIdBitString: String, _ eventCodeBitstring: St
     return station
 }
 
-func getTransitIcon(_ eventCodeBitstring: String) -> String {
-    let (eventTransportMode, eventTransition) = interpretEventCode(eventCodeBitstring)
+func getTransitIcon(_ eventTransportMode: String, _ eventTransition: String) -> String {
     switch (eventTransportMode) {
-    case "Bus urbain":
+    case "Bus urbain", "Noctilien":
         return "bus.fill"
     case "Bus interurbain":
         return "bus.doubledecker.fill"
-    case "Train":
+    case "Train", "RER", "Train / RER":
         if eventTransition.contains("Entrée") {
             return "train.side.front.car"
         }
