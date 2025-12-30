@@ -32,6 +32,8 @@ func interpretNavigoCommercialId(_ bitstring: String) -> String {
         return "Unknown"
     case 5:
         return "Navigo Imagine R"
+    case 10:
+        return "eSE Apple"
     case 16:
         return "Navigo Easy Carte"
     case 17:
@@ -60,7 +62,9 @@ func interpretTariff(_ bitstring: String) -> String {
     case 0x0015:
         return "Paris - Visite"
     case 0x1000:
-        return "Navigo Liberté+"
+        return "Navigo Liberté +"
+    case 0x1001:
+        return "Navigo Liberté +"
     case 0x4000:
         return "Navigo Mois 75%"
     case 0x4001:
@@ -166,6 +170,9 @@ func interpretRouteNumber(_ routeNumberBitstring: String, _ eventCodeBitstring: 
         else if routeNumber == 18 {
             return "B"
         }
+        else if routeNumber == 29 {
+            return "Orlyval"
+        }
     }
     if (eventTransport == "Métro") {
         switch routeNumber {
@@ -180,6 +187,9 @@ func interpretRouteNumber(_ routeNumberBitstring: String, _ eventCodeBitstring: 
         default:
             return "\(routeNumber)"
         }
+    }
+    else if let routeName = NavigoLines.find(serviceProviderCode, routeNumber, eventTransport) {
+        return routeName.name
     }
     else if (eventTransport == "Tramway") {
         switch routeNumber {
@@ -209,11 +219,6 @@ func interpretRouteNumber(_ routeNumberBitstring: String, _ eventCodeBitstring: 
             return "T13"
         default:
             return "\(routeNumber)"
-        }
-    }
-    else if (eventTransport == "Bus urbain") {
-        if (routeNumber == 101 && serviceProviderCode == 221) {
-            return "C1"
         }
     }
     
@@ -248,6 +253,8 @@ func interpretServiceProvider(_ bitstring: String) -> String {
         return "RATP (Veolia Transport Nanterre)";
     case 221:
         return "Transdev Coteaux de la Marne";
+    case 230:
+        return "Transdev Sud Yvelines"
     default:
         return "Unknown (\(Int(bitstring, radix: 2) ?? 0))"
     }
@@ -255,7 +262,7 @@ func interpretServiceProvider(_ bitstring: String) -> String {
 
 func interpretLocationId(_ locationIdBitString: String, _ eventCodeBitstring: String, _ eventProviderBitstring: String) -> NavigoStationInfo {
     guard let value = Int(locationIdBitString, radix: 2) else {
-        return NavigoStationInfo.init(name: "Unknown (\(locationIdBitString))", provider_id: 0, provider_name: "", group: 0, id: 0, sub: 0, mode: "Unknown", lat: 0, long: 0, found: false)
+        return NavigoStationInfo.init(name: "Unknown (\(locationIdBitString))", provider_id: 0, group: 0, id: 0, sub: 0, mode: "Unknown", lat: 0, long: 0, found: false)
     }
     
     let eventTransport = interpretEventCode(eventCodeBitstring).0
@@ -267,7 +274,7 @@ func interpretLocationId(_ locationIdBitString: String, _ eventCodeBitstring: St
     let locationSub = value & 15
 
     guard let station = NavigoStations.find(eventProviderId, locationGroup, locationId, locationSub, eventTransport) else {
-        return NavigoStationInfo.init(name: "\(locationGroup)-\(locationId)-\(locationSub)", provider_id: eventProviderId, provider_name: "", group: locationGroup, id: locationId, sub: locationSub, mode: eventTransport, lat: 0, long: 0, found: false)
+        return NavigoStationInfo.init(name: "\(locationGroup)-\(locationId)-\(locationSub)", provider_id: eventProviderId, group: locationGroup, id: locationId, sub: locationSub, mode: eventTransport, lat: 0, long: 0, found: false)
     }
     return station
 }

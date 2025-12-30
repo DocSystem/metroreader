@@ -14,7 +14,7 @@ struct EventView: View {
     
     @State private var region: MKCoordinateRegion
     @State private var cityName: String = "Loading..."
-    @State private var location: NavigoStationInfo = NavigoStationInfo(name: "Loading", provider_id: 0, provider_name: "", group: 0, id: 0, sub: 0, mode: "", lat: 0.0, long: 0.0, found: false)
+    @State private var location: NavigoStationInfo = NavigoStationInfo(name: "Loading", provider_id: 0, group: 0, id: 0, sub: 0, mode: "", lat: 0.0, long: 0.0, found: false)
         
     init(eventInfo: [String: Any] = [:], contractsInfos: [[String: Any]] = []) {
         self.eventInfo = eventInfo
