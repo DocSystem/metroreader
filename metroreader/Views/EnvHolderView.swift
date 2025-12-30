@@ -17,10 +17,10 @@ struct EnvHolderView: View {
             Text("Network: \(interpretNetworkId(getKey(envHolderInfo, "EnvNetworkId") ?? "").1)")
             Text("Expiration Date: \(interpretDate(getKey(envHolderInfo, "EnvApplicationValidityEndDate") ?? ""))")
             if let holderCardStatus = getKey(envHolderInfo, "HolderDataCardStatus") {
-                Text("Card status: \(interpretNavigoPersonalizationStatusCode(holderCardStatus))")
+                Text("Card status: \(interpretPersonalizationStatusCode(holderCardStatus).0)")
             }
             if let holderCommercialId = getKey(envHolderInfo, "HolderDataCommercialID") {
-                Text("Commercial ID: \(interpretInt(holderCommercialId))")
+                Text("Commercial ID: \(interpretNavigoCommercialId(holderCommercialId))")
             }
         }
     }

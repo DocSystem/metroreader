@@ -26,6 +26,21 @@ func interpretNavigoPersonalizationStatusCode(_ bitstring: String) -> String {
     }
 }
 
+func interpretNavigoCommercialId(_ bitstring: String) -> String {
+    switch Int(bitstring, radix: 2) ?? 0 {
+    case 0:
+        return "Unknown"
+    case 5:
+        return "Navigo Imagine R"
+    case 16:
+        return "Navigo Easy Carte"
+    case 17:
+        return "Navigo Easy SOCS"
+    default:
+        return "Unknown (\(Int(bitstring, radix: 2) ?? 0))"
+    }
+}
+
 func interpretTariff(_ bitstring: String) -> String {
     switch Int(bitstring, radix: 2) ?? 0 {
     case 0x0000:
@@ -138,13 +153,13 @@ func interpretZonesShort(_ bitstring: String) -> String {
 }
 
 func interpretRouteNumber(_ routeNumberBitstring: String, _ eventCodeBitstring: String, _ eventServiceProviderBitstring: String) -> String {
-    let eventTransport = interpretEventCode(eventCodeBitstring).0
-    
     let routeNumber = Int(routeNumberBitstring, radix: 2)!
+    
+    let eventTransport = interpretEventCode(eventCodeBitstring, isRouteNumberPresent: true, routeNumber: routeNumber).0
     
     let serviceProviderCode = Int(eventServiceProviderBitstring, radix: 2)!
     
-    if (eventTransport == "Train") {
+    if (eventTransport == "RER") {
         if (routeNumber == 16) || (routeNumber == 17) {
             return "A"
         }
@@ -196,6 +211,11 @@ func interpretRouteNumber(_ routeNumberBitstring: String, _ eventCodeBitstring: 
             return "\(routeNumber)"
         }
     }
+    else if (eventTransport == "Bus urbain") {
+        if (routeNumber == 101 && serviceProviderCode == 221) {
+            return "C1"
+        }
+    }
     
     return "\(routeNumber)"
 }
@@ -208,8 +228,16 @@ func interpretServiceProvider(_ bitstring: String) -> String {
         return "RATP";
     case 4, 10:
         return "IDF Mobilites";
+    case 7:
+        return "RATP Cap Bièvre";
     case 8:
         return "ORA";
+    case 14:
+        return "LUG - Paris";
+    case 17:
+        return "Stretto";
+    case 109:
+        return "Keolis Ouest Val-de-Marne T9";
     case 115:
         return "CSO (VEOLIA)";
     case 116:
@@ -218,24 +246,28 @@ func interpretServiceProvider(_ bitstring: String) -> String {
         return "Phebus";
     case 175:
         return "RATP (Veolia Transport Nanterre)";
+    case 221:
+        return "Transdev Coteaux de la Marne";
     default:
         return "Unknown (\(Int(bitstring, radix: 2) ?? 0))"
     }
 }
 
-func interpretLocationId(_ locationIdBitString: String, _ eventCodeBitstring: String) -> NavigoStationInfo {
+func interpretLocationId(_ locationIdBitString: String, _ eventCodeBitstring: String, _ eventProviderBitstring: String) -> NavigoStationInfo {
     guard let value = Int(locationIdBitString, radix: 2) else {
-        return NavigoStationInfo.init(name: "Unknown (\(locationIdBitString))", group: 0, id: 0, sub: 0, mode: "Unknown", lat: 0, long: 0, found: false)
+        return NavigoStationInfo.init(name: "Unknown (\(locationIdBitString))", provider_id: 0, provider_name: "", group: 0, id: 0, sub: 0, mode: "Unknown", lat: 0, long: 0, found: false)
     }
     
     let eventTransport = interpretEventCode(eventCodeBitstring).0
+    
+    let eventProviderId = Int(eventProviderBitstring, radix: 2) ?? 0
     
     let locationGroup = value >> 9
     let locationId = (value >> 4) & 31
     let locationSub = value & 15
 
-    guard let station = NavigoStations.find(locationGroup, locationId, locationSub, eventTransport) else {
-        return NavigoStationInfo.init(name: "\(locationGroup)-\(locationId)-\(locationSub)", group: locationGroup, id: locationId, sub: locationSub, mode: eventTransport, lat: 0, long: 0, found: false)
+    guard let station = NavigoStations.find(eventProviderId, locationGroup, locationId, locationSub, eventTransport) else {
+        return NavigoStationInfo.init(name: "\(locationGroup)-\(locationId)-\(locationSub)", provider_id: eventProviderId, provider_name: "", group: locationGroup, id: locationId, sub: locationSub, mode: eventTransport, lat: 0, long: 0, found: false)
     }
     return station
 }
@@ -260,6 +292,8 @@ func getTransitIcon(_ eventCodeBitstring: String) -> String {
         return "lightrail.fill"
     case "Métro":
         return "tram.fill.tunnel"
+    case "Câble":
+        return "cablecar.fill"
     default:
         return "questionmark.circle.fill"
     }

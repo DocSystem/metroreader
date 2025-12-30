@@ -14,8 +14,8 @@ struct EventPreview: View {
         HStack {
             EventIcon(eventTransportMode: interpretEventCode(getKey(eventInfo, "EventCode") ?? "", isRouteNumberPresent: getKey(eventInfo, "EventRouteNumber") != nil).0, eventTransition: interpretEventCode(getKey(eventInfo, "EventCode") ?? "").1)
             VStack(alignment: .leading) {
-                if interpretLocationId(getKey(eventInfo, "EventLocationId") ?? "", getKey(eventInfo, "EventCode") ?? "").found {
-                    Text("\(interpretLocationId(getKey(eventInfo, "EventLocationId") ?? "", getKey(eventInfo, "EventCode") ?? "").name)")
+                if interpretLocationId(getKey(eventInfo, "EventLocationId") ?? "", getKey(eventInfo, "EventCode") ?? "", getKey(eventInfo, "EventServiceProvider") ?? "").found {
+                    Text("\(interpretLocationId(getKey(eventInfo, "EventLocationId") ?? "", getKey(eventInfo, "EventCode") ?? "", getKey(eventInfo, "EventServiceProvider") ?? "").name)")
                         .fontWeight(.bold)
                     
                     HStack(spacing: 0) {

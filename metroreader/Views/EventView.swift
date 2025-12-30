@@ -14,7 +14,7 @@ struct EventView: View {
     
     @State private var region: MKCoordinateRegion
     @State private var cityName: String = "Loading..."
-    @State private var location: NavigoStationInfo = NavigoStationInfo(name: "Loading", group: 0, id: 0, sub: 0, mode: "", lat: 0.0, long: 0.0, found: false)
+    @State private var location: NavigoStationInfo = NavigoStationInfo(name: "Loading", provider_id: 0, provider_name: "", group: 0, id: 0, sub: 0, mode: "", lat: 0.0, long: 0.0, found: false)
         
     init(eventInfo: [String: Any] = [:], contractsInfos: [[String: Any]] = []) {
         self.eventInfo = eventInfo
@@ -22,7 +22,8 @@ struct EventView: View {
         
         let eventLocationId = getKey(eventInfo, "EventLocationId") ?? ""
         let eventCode = getKey(eventInfo, "EventCode") ?? ""
-        let location = interpretLocationId(eventLocationId, eventCode)
+        let eventServiceProvider = getKey(eventInfo, "EventServiceProvider") ?? ""
+        let location = interpretLocationId(eventLocationId, eventCode, eventServiceProvider)
         
         _location = State(initialValue: location)
         
@@ -37,7 +38,7 @@ struct EventView: View {
             Section {
                 VStack(alignment: .center, spacing: 8) {
                     if location.found {
-                        Text("\(interpretLocationId(getKey(eventInfo, "EventLocationId") ?? "", getKey(eventInfo, "EventCode") ?? "").name)")
+                        Text("\(interpretLocationId(getKey(eventInfo, "EventLocationId") ?? "", getKey(eventInfo, "EventCode") ?? "", getKey(eventInfo, "EventServiceProvider") ?? "").name)")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .multilineTextAlignment(.center)
@@ -153,7 +154,7 @@ struct EventView: View {
             if location.found {
                 Section {
                     Map(initialPosition: .region(region)) {
-                        Marker(interpretLocationId(getKey(eventInfo, "EventLocationId") ?? "", getKey(eventInfo, "EventCode") ?? "").name, systemImage: getTransitIcon(getKey(eventInfo, "EventCode") ?? ""), coordinate: region.center)
+                        Marker(interpretLocationId(getKey(eventInfo, "EventLocationId") ?? "", getKey(eventInfo, "EventCode") ?? "", getKey(eventInfo, "EventServiceProvider") ?? "").name, systemImage: getTransitIcon(getKey(eventInfo, "EventCode") ?? ""), coordinate: region.center)
                     }
                     .frame(height: 200)
                     Text(cityName)

@@ -44,6 +44,11 @@ struct EventIcon: View {
                     .resizable(resizingMode: .stretch)
                     .padding(.all, 8.0)
                     .colorInvert()
+            case "Câble":
+                Image("mode_cable")
+                    .resizable(resizingMode: .stretch)
+                    .padding(.all, 8.0)
+                    .colorInvert()
             default:
                 Image(systemName: "questionmark.circle.fill")
             }
@@ -56,5 +61,5 @@ struct EventIcon: View {
 }
 
 #Preview {
-    EventIcon(eventTransportMode: "Train", eventTransition: "Entrée")
+    EventIcon(eventTransportMode: "Câble", eventTransition: "Entrée")
 }

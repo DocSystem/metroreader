@@ -71,7 +71,7 @@ func interpretPersonalizationStatusCode(_ bitstring: String) -> (String, Bool, B
     }
 }
 
-func interpretEventCode(_ bitstring: String, isRouteNumberPresent: Bool = false) -> (String, String) {
+func interpretEventCode(_ bitstring: String, isRouteNumberPresent: Bool = false, routeNumber: Int? = nil) -> (String, String) {
     /**
      Interprets the event code from a binary string
      - Parameter bitstring: The binary string of the event code to interpret
@@ -122,6 +122,9 @@ func interpretEventCode(_ bitstring: String, isRouteNumberPresent: Bool = false)
     var transportModeStr = transportModes[transportMode]
     if isRouteNumberPresent && transportModeStr == "Train" {
         transportModeStr = "RER"
+    }
+    if isRouteNumberPresent && routeNumber == 101 && transportModeStr == "Bus urbain" {
+        transportModeStr = "Câble"
     }
     
     return (transportModeStr, transitionModes[transitionType])

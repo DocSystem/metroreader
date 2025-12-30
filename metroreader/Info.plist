@@ -4,6 +4,7 @@
 <dict>
 	<key>com.apple.developer.nfc.readersession.iso7816.select-identifiers</key>
 	<array>
+		<string>A0000004040125090101</string>
 		<string>315449432e494341</string>
 		<string>334d54522e494341</string>
 		<string>5041592e535a54</string>
@@ -16,7 +17,6 @@
 		<string>a0000004520001</string>
 		<string>4150312e5748435443</string>
 		<string>A000000476416E64726F6964484345</string>
-		<string>a0000004040125090101000000000000</string>
 	</array>
 </dict>
 </plist>
