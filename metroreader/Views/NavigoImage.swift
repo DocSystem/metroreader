@@ -15,15 +15,15 @@ struct NavigoImage: View {
         case "Navigo Easy":
             Image("NavigoEasy")
                 .resizable(resizingMode: .stretch)
-                .aspectRatio(contentMode: .fill)
+                .aspectRatio(contentMode: .fit)
         case "Navigo Découverte":
             Image("NavigoDecouverte")
                 .resizable(resizingMode: .stretch)
-                .aspectRatio(contentMode: .fill)
+                .aspectRatio(contentMode: .fit)
         default:
             Image("Navigo")
                 .resizable(resizingMode: .stretch)
-                .aspectRatio(contentMode: .fill)
+                .aspectRatio(contentMode: .fit)
         }
     }
 }

@@ -55,16 +55,40 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
     @Published var tagEvents: [[String: Any]] = []
     @Published var tagSpecialEvents: [[String: Any]] = []
     private var session: NFCTagReaderSession?
+    var historyManager: HistoryManager?
     
     func tagReaderSessionDidBecomeActive(_ session: NFCTagReaderSession) {
         print("Tag reader session became active!")
     }
     
-    func beginScanning() {
+    var exportDataAsJSON: Data? {
+        if tagContracts.isEmpty && tagEvents.isEmpty && tagSpecialEvents.isEmpty && cardID == nil {
+            return nil
+        }
+        let dict: [String: Any] = [
+            "cardID": cardID ?? 0,
+            "envHolder": tagEnvHolder,
+            "contracts": tagContracts,
+            "events": tagEvents,
+            "specialEvents": tagSpecialEvents
+        ]
+        
+        // Safety check to ensure the dictionary can actually be made into JSON
+        guard JSONSerialization.isValidJSONObject(dict) else {
+            print("Error: Dictionary contains types that are not JSON compatible.")
+            return nil
+        }
+        
+        return try? JSONSerialization.data(withJSONObject: dict, options: [.prettyPrinted])
+    }
+    
+    func beginScanning(historyManager: HistoryManager) {
         guard NFCTagReaderSession.readingAvailable else {
             tagID = "NFC is not available on this device."
             return
         }
+        
+        self.historyManager = historyManager
         
         session = NFCTagReaderSession(pollingOption: .iso14443, delegate: self, queue: DispatchQueue.main)
         session?.alertMessage = "Placez votre passe sur le haut de votre iPhone pendant quelques secondes."
@@ -227,6 +251,16 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
                         }
                         session.alertMessage = "Votre passe a été lu. Vous pouvez le retirer"
                         session.invalidate()
+                        
+                        // Save the scan to history
+                        print("Saving scan to history")
+                        self.historyManager?.saveScan(
+                            cardID: self.cardID,
+                            env: self.tagEnvHolder,
+                            contracts: self.tagContracts,
+                            events: self.tagEvents,
+                            specialEvents: self.tagSpecialEvents
+                        )
                     } catch {
                         print("Failed with error: \(error)")
                         session.invalidate()
