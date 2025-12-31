@@ -14,6 +14,14 @@ struct SettingsPageView: View {
     @AppStorage("isHistoryEnabled") private var isHistoryEnabled = false
     
     @State private var showingDeleteAlert = false
+    
+    private var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+    }
+
+    private var buildNumber: String {
+        Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
+    }
 
     var body: some View {
         List {
@@ -36,9 +44,33 @@ struct SettingsPageView: View {
                 .disabled(historyManager.history.isEmpty)
             }
             
+            Section(header: Text("Crédits")) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("DocSystem")
+                        .font(.headline)
+                    Text("Recherche, rétro-ingénierie et développement")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.vertical, 4)
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Stitch")
+                        .font(.headline)
+                    Text("Designs des cartes")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.vertical, 4)
+            }
+            
             Section(header: Text("À propos")) {
-                Text("PassReader v1.0")
-                    .foregroundColor(.gray)
+                HStack {
+                    Text("Version")
+                    Spacer()
+                    Text("\(appVersion) (\(buildNumber))")
+                        .foregroundColor(.secondary)
+                }
             }
         }
         .navigationTitle("Réglages")
