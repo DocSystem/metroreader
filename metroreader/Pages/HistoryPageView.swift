@@ -19,7 +19,7 @@ struct HistoryPageView: View {
                     selectedRecord = record
                 } label: {
                     HStack(spacing: 8) {
-                        NavigoImage(passKind: interpretNavigoPersonalizationStatusCode(getKey(record.envHolder, "HolderDataCardStatus") ?? ""))
+                        NavigoImage(passKind: interpretNavigoPersonalizationStatusCode(getKey(record.envHolder, "HolderDataCardStatus") ?? "", record.contracts))
                             .shadow(radius: 2)
                             .frame(height: 50)
                         VStack(alignment: .leading, spacing: 4) {

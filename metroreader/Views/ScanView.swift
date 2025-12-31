@@ -20,7 +20,7 @@ struct ScanView: View {
             Section {
                 ZStack(alignment: .bottomLeading) {
                     if let holderCardStatus = getKey(tagEnvHolder, "HolderDataCardStatus") {
-                        NavigoImage(passKind: interpretNavigoPersonalizationStatusCode(holderCardStatus))
+                        NavigoImage(passKind: interpretNavigoPersonalizationStatusCode(holderCardStatus, tagContracts))
                             .shadow(radius: 2)
                         VStack(alignment: .leading) {
                             switch interpretNavigoPersonalizationStatusCode(holderCardStatus) {
@@ -95,7 +95,7 @@ struct ScanView: View {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 if !tagEnvHolder.isEmpty, let jsonData = exportDataAsJSON {
                     let dateStr = ISO8601DateFormatter().string(from: Date()).prefix(10)
-                    let fileName = "Navigo_\(cardID ?? 0)_\(dateStr).json"
+                    let fileName = "\(cardID ?? 0)_\(dateStr).metropass"
                     
                     ShareLink(
                         item: ExportFile(data: jsonData, fileName: fileName),

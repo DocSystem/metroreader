@@ -27,7 +27,7 @@ struct ContractPreview: View {
             VStack(alignment: .leading) {
                 if let counterContractCount = getKey(contractInfo, "CounterContractCount") {
                     HStack(spacing: 4) {
-                        Text("\(interpretTariff(getKey(contractInfo, "ContractTariff") ?? ""))")
+                        Text("\(interpretTariff(getKey(contractInfo, "ContractTariff") ?? "", getKey(contractInfo, "ContractValidityEndDate") ?? ""))")
                             .font(.system(size: 12))
                             .foregroundColor(isDisabled ? .gray : .primary)
                         if isPreferred {
@@ -41,7 +41,7 @@ struct ContractPreview: View {
                 }
                 else {
                     HStack(spacing: 4) {
-                        Text("\(interpretTariff(getKey(contractInfo, "ContractTariff") ?? ""))")
+                        Text("\(interpretTariff(getKey(contractInfo, "ContractTariff") ?? "", getKey(contractInfo, "ContractValidityEndDate") ?? ""))")
                             .fontWeight(.bold)
                             .foregroundColor(isDisabled ? .gray : .primary)
                         if isPreferred {

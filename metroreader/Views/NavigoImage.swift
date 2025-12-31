@@ -20,6 +20,10 @@ struct NavigoImage: View {
             Image("NavigoDecouverte")
                 .resizable(resizingMode: .stretch)
                 .aspectRatio(contentMode: .fit)
+        case "Navigo JO", "Navigo JP":
+            Image("NavigoJO")
+                .resizable(resizingMode: .stretch)
+                .aspectRatio(contentMode: .fit)
         default:
             Image("Navigo")
                 .resizable(resizingMode: .stretch)

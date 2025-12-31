@@ -5,8 +5,27 @@
 //  Created by Antoine Souben-Fink on 07/02/2025.
 //
 
-func interpretNavigoPersonalizationStatusCode(_ bitstring: String) -> String {
+func interpretNavigoPersonalizationStatusCode(_ bitstring: String, _ contracts: [[String: Any]] = []) -> String {
     let (perso, integral, imaginer) = interpretPersonalizationStatusCode(bitstring)
+    
+    for contractInfo in contracts {
+        if let tariffBitstring = getKey(contractInfo, "ContractTariff") {
+            let tariff = Int(tariffBitstring, radix: 2)
+            if tariff == 0x000E {
+                if let endDateBitstring = getKey(contractInfo, "ContractValidityEndDate") {
+                    let endDate = interpretDate(endDateBitstring)
+                    switch endDate {
+                    case "14/08/2024":
+                        return "Navigo JO"
+                    case "11/09/2024":
+                        return "Navigo JP"
+                    default:
+                        return "Navigo JO"
+                    }
+                }
+            }
+        }
+    }
     
     switch perso {
     case "Anonymous":
@@ -27,9 +46,14 @@ func interpretNavigoPersonalizationStatusCode(_ bitstring: String) -> String {
 }
 
 func interpretNavigoCommercialId(_ bitstring: String) -> String {
+    // À trouver : Navigo Découverte, eSE Android (ou eq)
     switch Int(bitstring, radix: 2) ?? 0 {
     case 0:
         return "Unknown"
+    case 1:
+        return "Navigo"
+    case 2:
+        return "Navigo Annuel"
     case 5:
         return "Navigo Imagine R"
     case 10:
@@ -43,7 +67,7 @@ func interpretNavigoCommercialId(_ bitstring: String) -> String {
     }
 }
 
-func interpretTariff(_ bitstring: String) -> String {
+func interpretTariff(_ bitstring: String, _ contractEndDateBitstring: String) -> String {
     switch Int(bitstring, radix: 2) ?? 0 {
     case 0x0000:
         return "Navigo Mois"
@@ -59,8 +83,17 @@ func interpretTariff(_ bitstring: String) -> String {
         return "Imagine R Étudiant"
     case 0x000D:
         return "Navigo Jeunes Week-end"
-    case 0x000E:
-        return "Navigo JOP"
+    case 0x000E: do {
+        let endDate = interpretDate(contractEndDateBitstring)
+        switch endDate {
+        case "14/08/2024":
+            return "Navigo Jeux Olympiques"
+        case "11/09/2024":
+            return "Navigo Jeux Paralympiques"
+        default:
+            return "Navigo JOP"
+        }
+    }
     case 0x0015:
         return "Paris - Visite"
     case 0x1000:

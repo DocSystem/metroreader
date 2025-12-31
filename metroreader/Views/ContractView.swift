@@ -22,7 +22,7 @@ struct ContractView: View {
         List {
             Section {
                 VStack(alignment: .center, spacing: 8) {
-                    Text("\(interpretTariff(getKey(contractInfo, "ContractTariff") ?? ""))")
+                    Text("\(interpretTariff(getKey(contractInfo, "ContractTariff") ?? "", getKey(contractInfo, "ContractValidityEndDate") ?? ""))")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .multilineTextAlignment(.center)

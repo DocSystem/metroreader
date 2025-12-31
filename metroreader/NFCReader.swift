@@ -82,6 +82,34 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
         return try? JSONSerialization.data(withJSONObject: dict, options: [.prettyPrinted])
     }
     
+    func importJSON(from data: Data, historyManager: HistoryManager) {
+        self.historyManager = historyManager
+        
+        do {
+            if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                DispatchQueue.main.async {
+                    self.cardID = json["cardID"] as? Int
+                    self.tagEnvHolder = json["envHolder"] as? [String: Any] ?? [:]
+                    self.tagContracts = json["contracts"] as? [[String: Any]] ?? []
+                    self.tagEvents = json["events"] as? [[String: Any]] ?? []
+                    self.tagSpecialEvents = json["specialEvents"] as? [[String: Any]] ?? []
+                    
+                    self.tagID = "Imported Card: \(self.cardID ?? 0)"
+                    
+                    self.historyManager?.saveScan(
+                        cardID: self.cardID,
+                        env: self.tagEnvHolder,
+                        contracts: self.tagContracts,
+                        events: self.tagEvents,
+                        specialEvents: self.tagSpecialEvents
+                    )
+                }
+            }
+        } catch {
+            print("Failed to parse imported JSON: \(error)")
+        }
+    }
+    
     func beginScanning(historyManager: HistoryManager) {
         guard NFCTagReaderSession.readingAvailable else {
             tagID = "NFC is not available on this device."
@@ -253,7 +281,6 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
                         session.invalidate()
                         
                         // Save the scan to history
-                        print("Saving scan to history")
                         self.historyManager?.saveScan(
                             cardID: self.cardID,
                             env: self.tagEnvHolder,
