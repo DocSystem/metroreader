@@ -46,8 +46,16 @@ struct SettingsPageView: View {
             
             Section(header: Text("Crédits")) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("DocSystem")
-                        .font(.headline)
+                    // Lien pour DocSystem
+                    Link(destination: URL(string: "https://twitter.com/TheDocSystem")!) {
+                        HStack {
+                            Text("DocSystem")
+                                .font(.headline)
+                            Image(systemName: "arrow.up.right.circle.fill")
+                                .font(.caption)
+                        }
+                    }
+                    
                     Text("Recherche, rétro-ingénierie et développement")
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -55,8 +63,16 @@ struct SettingsPageView: View {
                 .padding(.vertical, 4)
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Stitch")
-                        .font(.headline)
+                    // Lien pour Stitch
+                    Link(destination: URL(string: "https://twitter.com/TweetingStitch")!) {
+                        HStack {
+                            Text("Stitch")
+                                .font(.headline)
+                            Image(systemName: "arrow.up.right.circle.fill")
+                                .font(.caption)
+                        }
+                    }
+                    
                     Text("Designs des cartes")
                         .font(.caption)
                         .foregroundColor(.secondary)

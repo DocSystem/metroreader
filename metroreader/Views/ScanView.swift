@@ -76,6 +76,18 @@ struct ScanView: View {
                             EventPreview(eventInfo: tagEvents[i])
                         }
                     }
+                    
+                    let discoveredStations: [NavigoStationInfo] = tagEvents.compactMap { event in
+                        let location = interpretLocationId(getKey(event, "EventLocationId") ?? "", getKey(event, "EventCode") ?? "", getKey(event, "EventServiceProvider") ?? "", getKey(event, "EventRouteNumber"))
+                        if location.found {
+                            return location
+                        }
+                        return nil
+                    }
+                    
+                    if !discoveredStations.isEmpty {
+                        EventsMapView(events: tagEvents)
+                    }
                 }
             }
             

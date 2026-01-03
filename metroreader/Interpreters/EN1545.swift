@@ -120,6 +120,11 @@ func interpretEventCode(_ bitstring: String, isRouteNumberPresent: Bool = false,
     ]
     
     var transportModeStr = transportModes[transportMode]
+    if isRouteNumberPresent && transportModeStr == "Métro" {
+        if routeNumber == 16 {
+            transportModeStr = "RER"
+        }
+    }
     if isRouteNumberPresent && transportModeStr == "Train" {
         if routeNumber == 29 {
             transportModeStr = "Métro"

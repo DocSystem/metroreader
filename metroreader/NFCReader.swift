@@ -232,8 +232,20 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
                                             }
                                         }
                                     }
-                                    let BetterContract = contractList[i - 1]
-                                    parsedContract["BetterContract"] = BetterContract
+                                    let BetterContract = contractList.first(where: { contract in
+                                        if let pointerBitString = contract["ContractListPointer"] as? String,
+                                           let pointerValue = Int(pointerBitString, radix: 2) {
+                                            return pointerValue == i
+                                        }
+                                        return false
+                                    })
+                                    if let foundContract = BetterContract {
+                                        parsedContract["BetterContract"] = foundContract
+                                        self.tagContracts.append(parsedContract)
+                                        print("Found matching BetterContract for pointer \(i): \(foundContract)")
+                                    } else {
+                                        print("No BetterContract matches pointer \(i)")
+                                    }
                                     
                                     self.tagContracts.append(parsedContract)
                                     print(parsedContract)

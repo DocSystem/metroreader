@@ -10,7 +10,7 @@ import Foundation
 public struct NavigoLineInfo: Codable {
     let name: String
     let provider_id: Int
-    let id: Int
+    let line_id: Int
     let mode: String
     let is_noctilien: Bool
 }
@@ -29,10 +29,10 @@ public class NavigoLines {
         }
     }()
 
-    public class func find(_ provider: Int, _ id: Int, _ mode: String) -> NavigoLineInfo? {
-        if let line = allLines.first(where: { $0.provider_id == provider && $0.id == id && $0.mode == mode }) {
+    public class func find(_ provider: Int, _ line_id: Int, _ mode: String) -> NavigoLineInfo? {
+        if let line = allLines.first(where: { $0.provider_id == provider && $0.line_id == line_id && $0.mode == mode }) {
             return line
         }
-        return allLines.first { $0.provider_id == provider && $0.id == (id >> 8) && $0.mode == mode }
+        return allLines.first { $0.provider_id == provider && $0.line_id == (line_id >> 8) && $0.mode == mode }
     }
 }

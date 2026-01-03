@@ -21,7 +21,7 @@ struct EventView: View {
     
     @State private var region: MKCoordinateRegion
     @State private var cityName: String = "Loading..."
-    @State private var location: NavigoStationInfo = NavigoStationInfo(name: "Loading", provider_id: 0, group: 0, id: 0, sub: 0, mode: "", lat: 0.0, long: 0.0, found: false)
+    @State private var location: NavigoStationInfo = NavigoStationInfo(name: "Loading", provider_id: 0, line_id: nil, location_id: 0, mode: "", lat: 0.0, lon: 0.0, found: false)
         
     init(eventInfo: [String: Any] = [:], contractsInfos: [[String: Any]] = []) {
         self.eventInfo = eventInfo
@@ -69,7 +69,7 @@ struct EventView: View {
         _location = State(initialValue: self.eventLocation)
         
         _region = State(initialValue: MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: self.eventLocation.lat, longitude: self.eventLocation.long),
+            center: CLLocationCoordinate2D(latitude: self.eventLocation.lat, longitude: self.eventLocation.lon),
             span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
         ))
     }

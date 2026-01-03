@@ -289,6 +289,8 @@ func interpretServiceProvider(_ bitstring: String) -> String {
         return "RATP (Veolia Transport Nanterre)";
     case 221:
         return "Transdev Coteaux de la Marne";
+    case 222:
+        return "Keolis Ouest Val-de-Marne"
     case 230:
         return "Transdev Sud Yvelines"
     default:
@@ -298,7 +300,7 @@ func interpretServiceProvider(_ bitstring: String) -> String {
 
 func interpretLocationId(_ locationIdBitString: String, _ eventCodeBitstring: String, _ eventServiceProviderBitstring: String, _ routeNumberBitstring: String?) -> NavigoStationInfo {
     guard let value = Int(locationIdBitString, radix: 2) else {
-        return NavigoStationInfo.init(name: "Unknown (\(locationIdBitString))", provider_id: 0, group: 0, id: 0, sub: 0, mode: "Unknown", lat: 0, long: 0, found: false)
+        return NavigoStationInfo.init(name: "Unknown (\(locationIdBitString))", provider_id: 0, line_id: nil, location_id: 0, mode: "Unknown", lat: 0, lon: 0, found: false)
     }
     
     let eventRouteNumberPresent = (routeNumberBitstring != nil)
@@ -306,13 +308,9 @@ func interpretLocationId(_ locationIdBitString: String, _ eventCodeBitstring: St
     let eventTransport = interpretEventCode(eventCodeBitstring, isRouteNumberPresent: eventRouteNumberPresent, routeNumber: eventRouteNumberPresent ? Int(routeNumberBitstring ?? "0", radix: 2) : nil).0
     
     let eventServiceProviderId = Int(eventServiceProviderBitstring, radix: 2) ?? 0
-    
-    let locationGroup = value >> 9
-    let locationId = (value >> 4) & 31
-    let locationSub = value & 15
 
-    guard let station = NavigoStations.find(eventServiceProviderId, locationGroup, locationId, locationSub, eventTransport) else {
-        return NavigoStationInfo.init(name: "\(locationGroup)-\(locationId)-\(locationSub)", provider_id: eventServiceProviderId, group: locationGroup, id: locationId, sub: locationSub, mode: eventTransport, lat: 0, long: 0, found: false)
+    guard let station = NavigoStations.find(eventServiceProviderId, eventRouteNumberPresent ? Int(routeNumberBitstring ?? "", radix: 2) : nil, value, eventTransport) else {
+        return NavigoStationInfo.init(name: "\(value)", provider_id: eventServiceProviderId, line_id: nil, location_id: value, mode: eventTransport, lat: 0, lon: 0, found: false)
     }
     return station
 }
