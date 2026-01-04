@@ -5,6 +5,9 @@
 //  Created by Antoine Souben-Fink on 07/02/2025.
 //
 
+import Foundation
+
+
 func interpretNavigoPersonalizationStatusCode(_ bitstring: String, _ contracts: [[String: Any]] = []) -> String {
     let (perso, integral, imaginer) = interpretPersonalizationStatusCode(bitstring)
     
@@ -130,6 +133,15 @@ func interpretTariff(_ bitstring: String, _ contractEndDateBitstring: String) ->
         return "Navigo Solidarité Gratuit"
     default:
         return "Unknown (\(Int(bitstring, radix: 2) ?? 0))"
+    }
+}
+
+func interpretTariffDuration(_ bitstring: String) -> TimeInterval {
+    switch Int(bitstring, radix: 2) ?? 0 {
+    case 0x5000, 0x5006, 0x5010, 0x5016: // Ticket T+ / Bus-Tram
+        return TimeInterval(5400)
+    default:
+        return TimeInterval(7200)
     }
 }
 

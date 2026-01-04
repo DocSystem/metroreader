@@ -49,6 +49,10 @@ struct ScanView: View {
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets())
             
+            if tagContracts.count > 0 && tagEvents.count > 0 {
+                StatusView(contracts: tagContracts, events: tagEvents)
+            }
+            
             if !tagEnvHolder.isEmpty {
                 Section(header: Text("Environnement")) {
                     EnvHolderView(envHolderInfo: tagEnvHolder)
@@ -76,18 +80,22 @@ struct ScanView: View {
                             EventPreview(eventInfo: tagEvents[i])
                         }
                     }
-                    
-                    let discoveredStations: [NavigoStationInfo] = tagEvents.compactMap { event in
-                        let location = interpretLocationId(getKey(event, "EventLocationId") ?? "", getKey(event, "EventCode") ?? "", getKey(event, "EventServiceProvider") ?? "", getKey(event, "EventRouteNumber"))
-                        if location.found {
-                            return location
-                        }
-                        return nil
+                }
+                
+                let discoveredStations: [NavigoStationInfo] = tagEvents.compactMap { event in
+                    let location = interpretLocationId(getKey(event, "EventLocationId") ?? "", getKey(event, "EventCode") ?? "", getKey(event, "EventServiceProvider") ?? "", getKey(event, "EventRouteNumber"))
+                    if location.found {
+                        return location
                     }
-                    
-                    if !discoveredStations.isEmpty {
+                    return nil
+                }
+                
+                if !discoveredStations.isEmpty {
+                    Section {
                         EventsMapView(events: tagEvents)
                     }
+                    .listRowInsets(EdgeInsets())
+                    .listRowSeparator(.hidden)
                 }
             }
             

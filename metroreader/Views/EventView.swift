@@ -74,6 +74,15 @@ struct EventView: View {
         ))
     }
     
+    private var colorForTransition: Color {
+        if self.eventTransition.starts(with: "Entrée") {
+            return Color.blue
+        } else if self.eventTransition.starts(with: "Sortie") {
+            return Color.red
+        }
+        return Color.purple
+    }
+    
     var body: some View {
         List {
             Section {
@@ -198,6 +207,7 @@ struct EventView: View {
                 Section {
                     Map(initialPosition: .region(region)) {
                         Marker(self.eventLocation.name, systemImage: getTransitIcon(self.eventTransportMode, self.eventTransition), coordinate: region.center)
+                            .tint(self.colorForTransition)
                     }
                     .frame(height: 200)
                     Text(cityName)

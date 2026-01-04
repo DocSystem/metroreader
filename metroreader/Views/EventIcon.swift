@@ -23,7 +23,7 @@ struct EventIcon: View {
                 Image("mode_noctilien")
                     .resizable(resizingMode: .stretch)
                     .padding(.all, 8.0)
-                    .colorInvert()
+                    .brightness(1.0)
             case "Bus interurbain":
                 Image("mode_bus")
                     .resizable(resizingMode: .stretch)

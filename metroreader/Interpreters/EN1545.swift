@@ -54,6 +54,11 @@ func interpretTime(_ bitstring: String) -> String {
     return dateFormatter.string(from: date)
 }
 
+func interpretTimeAsTimeInterval(_ bitstring: String) -> TimeInterval {
+    let minutesSinceMidnight = Int(bitstring, radix: 2) ?? 0
+    return TimeInterval(minutesSinceMidnight * 60)
+}
+
 func interpretPersonalizationStatusCode(_ bitstring: String) -> (String, Bool, Bool) {
     let rufBit = String(bitstring.first!) == "1"
     let org = String(bitstring.dropFirst(1).first!) == "1"
