@@ -17,9 +17,58 @@ struct ScanView: View {
     
     @ObservedObject var historyManager: HistoryManager
     
+    @State private var showAllContracts = false
+    @State private var showAllEvents = false
     @State private var showingRenameAlert = false
     @State private var newNickname = ""
     @State private var showingImagePicker = false
+    
+    private var displayedContractsIndices: [Int] {
+        let allIndices = Array(0..<tagContracts.count)
+        
+        // Si l'utilisateur a cliqué sur "Voir tout", on donne tout
+        if showAllContracts {
+            return allIndices
+        }
+        
+        // On cherche l'index du contrat préféré
+        let preferredIndex = allIndices.first { i in
+            isContractBest(tagContracts[i], tagContracts)
+        }
+        
+        // Si on trouve un préféré, on ne renvoie que celui-là
+        if let bestIndex = preferredIndex {
+            return [bestIndex]
+        }
+        
+        // Sinon (pas de préféré détecté), on affiche tout par défaut
+        return allIndices
+    }
+    
+    private var displayedEventsIndices: [Int] {
+        let allIndices = Array(0..<tagEvents.count)
+        if showAllEvents {
+            return allIndices
+        } else {
+            return Array(allIndices.prefix(3))
+        }
+    }
+    
+    private var stationsToDisplay: [NavigoStationInfo] {
+        // 1. On récupère les événements concernés
+        let relevantEvents = showAllEvents ? tagEvents : Array(tagEvents.prefix(3))
+        
+        // 2. On mappe vers les infos de station
+        return relevantEvents.compactMap { event -> NavigoStationInfo? in
+            let locId = getKey(event, "EventLocationId") ?? ""
+            let code = getKey(event, "EventCode") ?? ""
+            let provider = getKey(event, "EventServiceProvider") ?? ""
+            let route = getKey(event, "EventRouteNumber")
+            
+            let location = interpretLocationId(locId, code, provider, route)
+            return location.found ? location : nil
+        }
+    }
     
     var body: some View {
         List {
@@ -29,7 +78,7 @@ struct ScanView: View {
                         NavigoImage(imageName: historyManager.history.first(where: { $0.cardID == cardID })?.image ?? interpretNavigoImage(holderCardStatus, holderCommercialId, tagContracts))
                             .shadow(radius: 2)
                         VStack(alignment: .leading) {
-                            switch interpretNavigoPersonalizationStatusCode(holderCardStatus, holderCommercialId, tagContracts) {
+                            switch interpretNavigoPersonalizationStatusCode(holderCardStatus) {
                             case "Navigo Annuel":
                                 Text("A")
                                     .fontWeight(.medium)
@@ -68,11 +117,29 @@ struct ScanView: View {
             
             if tagContracts.count > 0 {
                 Section(header: Text("Contrats")) {
-                    ForEach(tagContracts.indices, id: \.self) { i in
+                    ForEach(displayedContractsIndices, id: \.self) { i in
                         NavigationLink {
                             ContractView(contractInfo: tagContracts[i])
                         } label: {
-                            ContractPreview(contractInfo: tagContracts[i], isPreferred: isContractBest(tagContracts[i], tagContracts), isDisabled: isContractDisabled(tagContracts[i]))
+                            ContractPreview(
+                                contractInfo: tagContracts[i],
+                                isPreferred: isContractBest(tagContracts[i], tagContracts),
+                                isDisabled: isContractDisabled(tagContracts[i])
+                            )
+                        }
+                    }
+                    
+                    if tagContracts.count > 1 && !showAllContracts && displayedContractsIndices.count < tagContracts.count {
+                        Button(action: {
+                            withAnimation { showAllContracts = true }
+                        }) {
+                            HStack {
+                                Text("Voir tout...")
+                                Spacer()
+                                Text("\(tagContracts.count)")
+                                    .foregroundColor(.gray)
+                                    .font(.caption)
+                            }
                         }
                     }
                 }
@@ -80,26 +147,32 @@ struct ScanView: View {
             
             if tagEvents.count > 0 {
                 Section(header: Text("Derniers évènements")) {
-                    ForEach(tagEvents.indices, id: \.self) { i in
+                    ForEach(displayedEventsIndices, id: \.self) { i in
                         NavigationLink {
                             EventView(eventInfo: tagEvents[i], contractsInfos: tagContracts)
                         } label: {
                             EventPreview(eventInfo: tagEvents[i])
                         }
                     }
-                }
-                
-                let discoveredStations: [NavigoStationInfo] = tagEvents.compactMap { event in
-                    let location = interpretLocationId(getKey(event, "EventLocationId") ?? "", getKey(event, "EventCode") ?? "", getKey(event, "EventServiceProvider") ?? "", getKey(event, "EventRouteNumber"))
-                    if location.found {
-                        return location
+                    
+                    if tagEvents.count > 3 && !showAllEvents {
+                        Button(action: {
+                            withAnimation { showAllEvents = true }
+                        }) {
+                            HStack {
+                                Text("Voir tout...")
+                                Spacer()
+                                Text("\(tagEvents.count)")
+                                    .foregroundColor(.gray)
+                                    .font(.caption)
+                            }
+                        }
                     }
-                    return nil
                 }
                 
-                if !discoveredStations.isEmpty {
+                if !stationsToDisplay.isEmpty {
                     Section {
-                        EventsMapView(events: tagEvents)
+                        EventsMapView(events: showAllEvents ? tagEvents : Array(tagEvents.prefix(3)))
                     }
                     .listRowInsets(EdgeInsets())
                     .listRowSeparator(.hidden)

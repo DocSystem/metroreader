@@ -15,8 +15,11 @@ struct ImagePickerSheet: View {
     
     // Liste des images disponibles dans vos Assets
     let availableImages = [
-        "Navigo", "Navigo Découverte", "Navigo Easy Carte",
-        "Navigo Easy SOCS", "Navigo eSE Apple", "Navigo JO", "Navigo JP", "Navigo STIF", "NavigOpus", "NavigOyster"
+        "Navigo", "Navigo Découverte",
+        "Navigo Easy Carte", "Navigo Easy SOCS", "Navigo Easy Carte JO",
+        "Navigo eSE Apple",
+        "Navigo JO", "Navigo JP",
+        "Navigo STIF", "Pass Carmillion", "NavigOpus", "NavigOyster"
     ]
     
     let columns = [GridItem(.flexible()), GridItem(.flexible())]

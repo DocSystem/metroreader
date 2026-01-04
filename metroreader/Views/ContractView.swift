@@ -115,64 +115,66 @@ struct ContractView: View {
                 }
             }
             
-            Section(header: Text("Vente")) {
-                VStack(alignment: .leading, spacing: 10) {
-                    HStack {
-                        Text("Vendu le")
-                            .fontWeight(.semibold)
-                        Spacer()
-                        Text(interpretDate(getKey(contractInfo, "ContractValiditySaleDate") ?? ""))
-                            .fontWeight(.semibold)
-                    }
-                    
-                    Divider()
-                    
-                    HStack {
-                        Text("Vendu par")
-                            .fontWeight(.semibold)
-                        Spacer()
-                        Text(interpretServiceProvider(getKey(contractInfo, "ContractValiditySaleAgent") ?? ""))
-                            .fontWeight(.semibold)
-                    }
-                    
-                    Divider()
-                    
-                    HStack {
-                        Text("Appareil")
-                            .fontWeight(.semibold)
-                        Spacer()
-                        Text("\(interpretInt(getKey(contractInfo, "ContractValiditySaleDevice") ?? ""))")
-                            .fontWeight(.semibold)
-                    }
-                    
-                    if let contractPriceAmount = getKey(contractInfo, "ContractPriceAmount") {
-                        Divider()
-                        
+            if let contractSaleDate = getKey(contractInfo, "ContractValiditySaleDate"), Int(contractSaleDate, radix: 2) != 0 {
+                Section(header: Text("Vente")) {
+                    VStack(alignment: .leading, spacing: 10) {
                         HStack {
-                            Text("Prix de vente")
+                            Text("Vendu le")
                                 .fontWeight(.semibold)
                             Spacer()
-                            Text(String(format: "%.2f €", interpretAmount(contractPriceAmount)))
+                            Text(interpretDate(getKey(contractInfo, "ContractValiditySaleDate") ?? ""))
                                 .fontWeight(.semibold)
                         }
-                    }
-                    
-                    if let contractPayMethod = getKey(contractInfo, "ContractPayMethod") {
-                        Divider()
                         
-                        HStack {
-                            Text("Mode de paiement")
-                                .fontWeight(.semibold)
-                            Spacer()
-                            Text(interpretPayMethod(contractPayMethod))
-                                .fontWeight(.semibold)
+                        if let contractSaleAgent = getKey(contractInfo, "ContractValiditySaleAgent") {
+                            Divider()
+                            
+                            HStack {
+                                Text("Vendu par")
+                                    .fontWeight(.semibold)
+                                Spacer()
+                                Text(interpretServiceProvider(contractSaleAgent))
+                                    .fontWeight(.semibold)
+                            }
+                        }
+                        
+                        if let contractSaleDevice = getKey(contractInfo, "ContractValiditySaleDevice") {
+                            Divider()
+                            
+                            HStack {
+                                Text("Appareil")
+                                    .fontWeight(.semibold)
+                                Spacer()
+                                Text("\(interpretInt(contractSaleDevice))")
+                                    .fontWeight(.semibold)
+                            }
+                        }
+                        
+                        if let contractPriceAmount = getKey(contractInfo, "ContractPriceAmount") {
+                            Divider()
+                            
+                            HStack {
+                                Text("Prix de vente")
+                                    .fontWeight(.semibold)
+                                Spacer()
+                                Text(String(format: "%.2f €", interpretAmount(contractPriceAmount)))
+                                    .fontWeight(.semibold)
+                            }
+                        }
+                        
+                        if let contractPayMethod = getKey(contractInfo, "ContractPayMethod") {
+                            Divider()
+                            
+                            HStack {
+                                Text("Mode de paiement")
+                                    .fontWeight(.semibold)
+                                Spacer()
+                                Text(interpretPayMethod(contractPayMethod))
+                                    .fontWeight(.semibold)
+                            }
                         }
                     }
                 }
-            }
-            
-            Section {
-                
             }
         }
     }

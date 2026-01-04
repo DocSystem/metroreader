@@ -60,7 +60,7 @@ func interpretNavigoImage(_ personalizationStatusBitstring: String, _ commercial
         return "Navigo"
     case "eSE Apple":
         return "Navigo eSE Apple"
-    case "Navigo Easy Carte", "Navigo Easy SOCS":
+    case "Navigo Easy Carte", "Navigo Easy SOCS", "Pass Carmillion":
         return commercialName
     default:
         switch perso {
@@ -76,33 +76,8 @@ func interpretNavigoImage(_ personalizationStatusBitstring: String, _ commercial
     }
 }
 
-func interpretNavigoPersonalizationStatusCode(_ bitstring: String, _ commercialIdBitString: String, _ contracts: [[String: Any]] = []) -> String {
+func interpretNavigoPersonalizationStatusCode(_ bitstring: String) -> String {
     let (perso, integral, imaginer) = interpretPersonalizationStatusCode(bitstring)
-    
-    let commercialName = interpretNavigoCommercialId(commercialIdBitString)
-    
-    if commercialName == "Navigo Easy SOCS" || commercialName == "eSE Apple" {
-        return commercialName
-    }
-    
-    for contractInfo in contracts {
-        if let tariffBitstring = getKey(contractInfo, "ContractTariff") {
-            let tariff = Int(tariffBitstring, radix: 2)
-            if tariff == 0x000E {
-                if let endDateBitstring = getKey(contractInfo, "ContractValidityEndDate") {
-                    let endDate = interpretDate(endDateBitstring)
-                    switch endDate {
-                    case "14/08/2024":
-                        return "Navigo JO"
-                    case "11/09/2024":
-                        return "Navigo JP"
-                    default:
-                        return "Navigo JO"
-                    }
-                }
-            }
-        }
-    }
     
     switch perso {
     case "Anonymous":
@@ -151,9 +126,7 @@ func interpretTariff(_ bitstring: String, _ contractEndDateBitstring: String) ->
     }
     case 0x0015:
         return "Paris - Visite"
-    case 0x1000:
-        return "Navigo Liberté +"
-    case 0x1001:
+    case 0x1000, 0x1001:
         return "Navigo Liberté +"
     case 0x4000:
         return "Navigo Mois 75%"
@@ -181,6 +154,8 @@ func interpretTariff(_ bitstring: String, _ contractEndDateBitstring: String) ->
         return "Métro-Train-RER (Réduit)"
     case 0x501b:
         return "Paris <> Aéroports (Réduit)"
+    case 0x8001:
+        return "Pass Carmillion"
     case 0x8003:
         return "Navigo Solidarité Gratuit"
     default:

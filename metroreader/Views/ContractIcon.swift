@@ -29,7 +29,7 @@ struct ContractIcon: View {
                 Image("ic_ticketing_day")
                     .resizable(resizingMode: .stretch)
                     .padding(.all, 8.0)
-            case 0x0004...0x0005:
+            case 0x0004, 0x0005:
                 Image("ic_ticketing_imaginer_pass")
                     .resizable(resizingMode: .stretch)
                     .padding(.all, 8.0)
@@ -37,11 +37,15 @@ struct ContractIcon: View {
                 Image("ic_ticketing_youthwe_pass")
                     .resizable(resizingMode: .stretch)
                     .padding(.all, 8.0)
+            case 0x000E:
+                Image("ic_ticketing_month")
+                    .resizable(resizingMode: .stretch)
+                    .padding(.all, 8.0)
             case 0x0015:
                 Image("ic_ticketing_paris")
                     .resizable(resizingMode: .stretch)
                     .padding(.all, 8.0)
-            case 0x1000:
+            case 0x1000, 0x1001:
                 Image("ic_ticketing_liberte_plus")
                     .resizable(resizingMode: .stretch)
                     .padding(.all, 8.0)
@@ -95,6 +99,10 @@ struct ContractIcon: View {
                     .padding(.all, 8.0)
             case 0x501b:
                 Image("ic_ticketing_orly_roissy")
+                    .resizable(resizingMode: .stretch)
+                    .padding(.all, 8.0)
+            case 0x8000:
+                Image("ic_ticketing_default")
                     .resizable(resizingMode: .stretch)
                     .padding(.all, 8.0)
             case 0x8003:
