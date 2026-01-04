@@ -77,23 +77,30 @@ struct ScanView: View {
                     if let holderCardStatus = getKey(tagEnvHolder, "HolderDataCardStatus"), let holderCommercialId = getKey(tagEnvHolder, "HolderDataCommercialID") {
                         NavigoImage(imageName: historyManager.history.first(where: { $0.cardID == cardID })?.image ?? interpretNavigoImage(holderCardStatus, holderCommercialId, tagContracts))
                             .shadow(radius: 2)
+                            .onTapGesture(count: 2) {
+                                showingImagePicker = true
+                            }
                         VStack(alignment: .leading) {
                             switch interpretNavigoPersonalizationStatusCode(holderCardStatus) {
                             case "Navigo Annuel":
                                 Text("A")
                                     .fontWeight(.medium)
                                     .foregroundColor(Color.black)
+                                    .allowsHitTesting(false)
                             case "Navigo Imagine R":
                                 Text("I")
                                     .fontWeight(.medium)
                                     .foregroundColor(Color.black)
+                                    .allowsHitTesting(false)
                             default:
                                 Spacer(minLength: 0.0)
+                                    .allowsHitTesting(false)
                             }
                             if cardID != 0 {
                                 Text("\(cardID)")
                                     .fontWeight(.medium)
                                     .foregroundColor(Color.black)
+                                    .allowsHitTesting(false)
                             }
                         }
                         .padding()
@@ -191,8 +198,25 @@ struct ScanView: View {
                 }
             }
         }
-        .navigationTitle(cardID != 0 ? historyManager.history.first(where: { $0.cardID == cardID })?.displayTitle ?? "" : "")
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                if cardID != 0 {
+                    let record = historyManager.history.first(where: { $0.cardID == Int(cardID) })
+                    
+                    Text(record?.displayTitle ?? "")
+                        .font(.headline)
+                        // Détection du double-clic sur le titre
+                        .onTapGesture(count: 2) {
+                            let impactMed = UIImpactFeedbackGenerator(style: .medium)
+                            impactMed.impactOccurred()
+                            
+                            newNickname = record?.nickname ?? ""
+                            showingRenameAlert = true
+                        }
+                        .help("Double-cliquez pour renommer") // Optionnel : bulle d'aide sur iPad/Mac
+                }
+            }
+            
             ToolbarItemGroup(placement: .topBarTrailing) {
                 Menu {
                     Button(action: {
