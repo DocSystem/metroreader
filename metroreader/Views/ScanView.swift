@@ -17,13 +17,13 @@ struct ScanView: View {
     
     var body: some View {
         List {
-            Section {
+            Section(header:
                 ZStack(alignment: .bottomLeading) {
-                    if let holderCardStatus = getKey(tagEnvHolder, "HolderDataCardStatus") {
-                        NavigoImage(passKind: interpretNavigoPersonalizationStatusCode(holderCardStatus, tagContracts))
+                    if let holderCardStatus = getKey(tagEnvHolder, "HolderDataCardStatus"), let holderCommercialId = getKey(tagEnvHolder, "HolderDataCommercialID") {
+                        NavigoImage(passKind: interpretNavigoPersonalizationStatusCode(holderCardStatus, holderCommercialId, tagContracts))
                             .shadow(radius: 2)
                         VStack(alignment: .leading) {
-                            switch interpretNavigoPersonalizationStatusCode(holderCardStatus) {
+                            switch interpretNavigoPersonalizationStatusCode(holderCardStatus, holderCommercialId, tagContracts) {
                             case "Navigo Annuel":
                                 Text("A")
                                     .fontWeight(.medium)
@@ -35,7 +35,7 @@ struct ScanView: View {
                             default:
                                 Spacer(minLength: 0.0)
                             }
-                            if cardID != nil {
+                            if cardID != nil && cardID != 0 {
                                 Text("\(cardID!)")
                                     .fontWeight(.medium)
                                     .foregroundColor(Color.black)
@@ -44,10 +44,11 @@ struct ScanView: View {
                         .padding()
                     }
                 }
-            }
+            ) {}
             .frame(maxWidth: .infinity)
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets())
+            
             
             if tagContracts.count > 0 && tagEvents.count > 0 {
                 StatusView(contracts: tagContracts, events: tagEvents)

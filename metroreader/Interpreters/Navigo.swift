@@ -8,8 +8,36 @@
 import Foundation
 
 
-func interpretNavigoPersonalizationStatusCode(_ bitstring: String, _ contracts: [[String: Any]] = []) -> String {
+func interpretNavigoCommercialId(_ bitstring: String) -> String {
+    // À trouver : Navigo Découverte, eSE Android (ou eq)
+    switch Int(bitstring, radix: 2) ?? 0 {
+    case 0:
+        return "Unknown"
+    case 1:
+        return "Navigo"
+    case 2:
+        return "Navigo Annuel"
+    case 5:
+        return "Navigo Imagine R"
+    case 10:
+        return "eSE Apple"
+    case 16:
+        return "Navigo Easy Carte"
+    case 17:
+        return "Navigo Easy SOCS"
+    default:
+        return "Unknown (\(Int(bitstring, radix: 2) ?? 0))"
+    }
+}
+
+func interpretNavigoPersonalizationStatusCode(_ bitstring: String, _ commercialIdBitString: String, _ contracts: [[String: Any]] = []) -> String {
     let (perso, integral, imaginer) = interpretPersonalizationStatusCode(bitstring)
+    
+    let commercialName = interpretNavigoCommercialId(commercialIdBitString)
+    
+    if commercialName == "Navigo Easy SOCS" || commercialName == "eSE Apple" {
+        return commercialName
+    }
     
     for contractInfo in contracts {
         if let tariffBitstring = getKey(contractInfo, "ContractTariff") {
@@ -45,28 +73,6 @@ func interpretNavigoPersonalizationStatusCode(_ bitstring: String, _ contracts: 
         return "Navigo"
     default:
         return "Navigo Unknown"
-    }
-}
-
-func interpretNavigoCommercialId(_ bitstring: String) -> String {
-    // À trouver : Navigo Découverte, eSE Android (ou eq)
-    switch Int(bitstring, radix: 2) ?? 0 {
-    case 0:
-        return "Unknown"
-    case 1:
-        return "Navigo"
-    case 2:
-        return "Navigo Annuel"
-    case 5:
-        return "Navigo Imagine R"
-    case 10:
-        return "eSE Apple"
-    case 16:
-        return "Navigo Easy Carte"
-    case 17:
-        return "Navigo Easy SOCS"
-    default:
-        return "Unknown (\(Int(bitstring, radix: 2) ?? 0))"
     }
 }
 

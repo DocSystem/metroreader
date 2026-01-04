@@ -8,13 +8,18 @@
 import Foundation
 import CoreNFC
 
-func selectAID(_ tag: NFCISO7816Tag, _ aidData: Data) async throws -> String {
+private func selectAID(_ tag: NFCISO7816Tag, _ aidData: Data) async throws -> String {
     let apdu = NFCISO7816APDU.init(instructionClass: 0x00, instructionCode: 0xA4, p1Parameter: 0x04, p2Parameter: 0x00, data: aidData, expectedResponseLength: -1)
     print("Sending APDU: \(apdu)")
     let (response, sw1, sw2) = try await tag.sendCommand(apdu: apdu)
     print("Response: \(String(format: "%02X %02X", sw1, sw2))")
     if sw1 == 0x90 && sw2 == 0x00 {
-        return response.map { String(format: "%02X", $0) }.joined()
+        let responseData = response.map { String(format: "%02X", $0) }.joined()
+        let binaryString = responseData.compactMap { hexChar -> String? in
+            guard let hexValue = Int(String(hexChar), radix: 16) else { return nil }
+            return String(format: "%04d", Int(String(hexValue, radix: 2))!)
+        }.joined()
+        return binaryString
     } else if sw1 == 0x6A && sw2 == 0x82 {
         throw NSError(domain: "Application not found", code: 0x6A82, userInfo: nil)
     } else if sw1 == 0x6A && sw2 == 0x83 {
@@ -24,7 +29,7 @@ func selectAID(_ tag: NFCISO7816Tag, _ aidData: Data) async throws -> String {
     }
 }
 
-func readRecord(_ tag: NFCISO7816Tag, _ recordId: UInt8, _ sfi: UInt8) async throws -> String {
+private func readRecord(_ tag: NFCISO7816Tag, _ recordId: UInt8, _ sfi: UInt8) async throws -> String {
     let apdu = NFCISO7816APDU.init(data: Data([0x00, 0xB2, recordId, sfi << 3 | 4, 0x00]))!
     print("Sending APDU: \(apdu)")
     let (response, sw1, sw2) = try await tag.sendCommand(apdu: apdu)
@@ -178,18 +183,11 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
             DispatchQueue.main.async {
                 Task {
                     do {
-                        let _ = try await selectAID(nfcIso7816Tag, Data([0xA0, 0x00, 0x00, 0x04, 0x04, 0x01, 0x25, 0x09, 0x01, 0x01]))
+                        let icc = try await selectAID(nfcIso7816Tag, Data([0xA0, 0x00, 0x00, 0x04, 0x04, 0x01, 0x25, 0x09, 0x01, 0x01]))
                         
-                        do {
-                            let icc = try await readRecord(nfcIso7816Tag, 1, 0x02)
-                            // now take bits 128 to 159 (32 bits) and convert it to decimal
-                            if let decimalValue = Int(icc.dropFirst(128).prefix(32), radix: 2) {
-                                self.tagID = "Card ID: \(decimalValue)"
-                                self.cardID = decimalValue
-                            }
-                        } catch {
-                            self.tagID = "Card ID: Non disponible"
-                            self.cardID = 0
+                        if let decimalValue = Int(icc.dropFirst(200).prefix(32), radix: 2) {
+                            self.tagID = "Card ID: \(decimalValue)"
+                            self.cardID = decimalValue
                         }
                         
                         self.tagEnvHolder = parseStructure(bitstring: try await readRecord(nfcIso7816Tag, 1, 0x07), element: IntercodeEnvHolder).0 as! [String: Any]

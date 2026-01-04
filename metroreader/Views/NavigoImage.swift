@@ -16,6 +16,14 @@ struct NavigoImage: View {
             Image("NavigoEasy")
                 .resizable(resizingMode: .stretch)
                 .aspectRatio(contentMode: .fit)
+        case "Navigo Easy SOCS":
+            Image("NavigoEasySOCS")
+                .resizable(resizingMode: .stretch)
+                .aspectRatio(contentMode: .fit)
+        case "eSE Apple":
+                Image("NavigoeSEApple")
+                    .resizable(resizingMode: .stretch)
+                    .aspectRatio(contentMode: .fit)
         case "Navigo Découverte":
             Image("NavigoDecouverte")
                 .resizable(resizingMode: .stretch)
