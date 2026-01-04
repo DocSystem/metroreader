@@ -25,8 +25,54 @@ func interpretNavigoCommercialId(_ bitstring: String) -> String {
         return "Navigo Easy Carte"
     case 17:
         return "Navigo Easy SOCS"
+    case 32:
+        return "Pass Carmillion"
     default:
         return "Unknown (\(Int(bitstring, radix: 2) ?? 0))"
+    }
+}
+
+func interpretNavigoImage(_ personalizationStatusBitstring: String, _ commercialIdBitString: String, _ contracts: [[String: Any]]) -> String {
+    let (perso, _, _) = interpretPersonalizationStatusCode(personalizationStatusBitstring)
+    let commercialName = interpretNavigoCommercialId(commercialIdBitString)
+    
+    for contractInfo in contracts {
+        if let tariffBitstring = getKey(contractInfo, "ContractTariff") {
+            let tariff = Int(tariffBitstring, radix: 2)
+            if tariff == 0x000E {
+                if let endDateBitstring = getKey(contractInfo, "ContractValidityEndDate") {
+                    let endDate = interpretDate(endDateBitstring)
+                    switch endDate {
+                    case "14/08/2024":
+                        return "Navigo JO"
+                    case "11/09/2024":
+                        return "Navigo JP"
+                    default:
+                        return "Navigo JO"
+                    }
+                }
+            }
+        }
+    }
+    
+    switch commercialName {
+    case "Navigo", "Navigo Annuel", "Navigo Imagine R":
+        return "Navigo"
+    case "eSE Apple":
+        return "Navigo eSE Apple"
+    case "Navigo Easy Carte", "Navigo Easy SOCS":
+        return commercialName
+    default:
+        switch perso {
+        case "Anonymous":
+            return "Navigo Easy"
+        case "Declarative":
+            return "Navigo Découverte"
+        case "Nominative":
+            return "Navigo"
+        default:
+            return "Navigo"
+        }
     }
 }
 

@@ -50,10 +50,51 @@ private func readRecord(_ tag: NFCISO7816Tag, _ recordId: UInt8, _ sfi: UInt8) a
     }
 }
 
+private func interpretCardID(_ iccBitstring: String) -> UInt64 {
+    var bytes = [UInt8]()
+    let bitLength = 8
+    
+    for i in stride(from: 0, to: iccBitstring.count, by: bitLength) {
+        let start = iccBitstring.index(iccBitstring.startIndex, offsetBy: i)
+        let end = iccBitstring.index(start, offsetBy: bitLength, limitedBy: iccBitstring.endIndex) ?? iccBitstring.endIndex
+        let chunk = String(iccBitstring[start..<end])
+        
+        if let byte = UInt8(chunk, radix: 2) {
+            bytes.append(byte)
+        }
+    }
+    
+    // 2. Locate Tag C7 (0xC7)
+    // Tag C7 is followed by Length 08 (0x08)
+    guard let c7Index = bytes.firstIndex(of: 0xC7),
+          c7Index + 1 < bytes.count,
+          bytes[c7Index + 1] == 0x08 else {
+        return 0
+    }
+    
+    // 3. Define the segment offset
+    // Data starts at c7Index + 2
+    // We want the last 4 bytes of the 8-byte value
+    let serialStart = c7Index + 2 + 4
+    let serialEnd = serialStart + 4
+    
+    guard bytes.count >= serialEnd else { return 0 }
+    
+    let targetBytes = bytes[serialStart..<serialEnd]
+    
+    // 4. Convert 4 bytes to UInt64
+    var result: UInt64 = 0
+    for byte in targetBytes {
+        result = (result << 8) | UInt64(byte)
+    }
+    
+    return result
+}
+
 class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
     
     @Published var tagID: String = "Tap 'Scan' to read NFC"
-    @Published var cardID: Int? = nil
+    @Published var cardID: UInt64 = 0
     @Published var tagEnvHolder: [String: Any] = [:]
     @Published var tagContracts: [[String: Any]] = []
     @Published var tagMinContractPriority: Int? = nil
@@ -67,11 +108,11 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
     }
     
     var exportDataAsJSON: Data? {
-        if tagContracts.isEmpty && tagEvents.isEmpty && tagSpecialEvents.isEmpty && cardID == nil {
+        if tagContracts.isEmpty && tagEvents.isEmpty && tagSpecialEvents.isEmpty && cardID == 0 {
             return nil
         }
         let dict: [String: Any] = [
-            "cardID": cardID ?? 0,
+            "cardID": cardID,
             "envHolder": tagEnvHolder,
             "contracts": tagContracts,
             "events": tagEvents,
@@ -93,13 +134,13 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
         do {
             if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
                 DispatchQueue.main.async {
-                    self.cardID = json["cardID"] as? Int
+                    self.cardID = json["cardID"] as? UInt64 ?? 0
                     self.tagEnvHolder = json["envHolder"] as? [String: Any] ?? [:]
                     self.tagContracts = json["contracts"] as? [[String: Any]] ?? []
                     self.tagEvents = json["events"] as? [[String: Any]] ?? []
                     self.tagSpecialEvents = json["specialEvents"] as? [[String: Any]] ?? []
                     
-                    self.tagID = "Imported Card: \(self.cardID ?? 0)"
+                    self.tagID = "Imported Card: \(self.cardID)"
                     
                     self.historyManager?.saveScan(
                         cardID: self.cardID,
@@ -139,7 +180,7 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
     func clearData() {
         DispatchQueue.main.async {
             self.tagID = "Tap 'Scan' to read NFC"
-            self.cardID = nil
+            self.cardID = 0
             self.tagEnvHolder = [:]
             self.tagContracts = []
             self.tagMinContractPriority = nil
@@ -185,10 +226,10 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
                     do {
                         let icc = try await selectAID(nfcIso7816Tag, Data([0xA0, 0x00, 0x00, 0x04, 0x04, 0x01, 0x25, 0x09, 0x01, 0x01]))
                         
-                        if let decimalValue = Int(icc.dropFirst(200).prefix(32), radix: 2) {
-                            self.tagID = "Card ID: \(decimalValue)"
-                            self.cardID = decimalValue
-                        }
+                        
+                        let decimalValue = interpretCardID(icc)
+                        self.tagID = "Card ID: \(decimalValue)"
+                        self.cardID = decimalValue
                         
                         self.tagEnvHolder = parseStructure(bitstring: try await readRecord(nfcIso7816Tag, 1, 0x07), element: IntercodeEnvHolder).0 as! [String: Any]
                         print(self.tagEnvHolder)

@@ -19,16 +19,16 @@ struct HistoryPageView: View {
                     selectedRecord = record
                 } label: {
                     HStack(spacing: 8) {
-                        NavigoImage(passKind: interpretNavigoPersonalizationStatusCode(getKey(record.envHolder, "HolderDataCardStatus") ?? "", getKey(record.envHolder, "HolderDataCommercialID") ?? "", record.contracts))
+                        NavigoImage(imageName: record.image)
                             .shadow(radius: 2)
                             .frame(height: 50)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("\(interpretNavigoCommercialId(getKey(record.envHolder, "HolderDataCommercialID") ?? ""))")
+                            Text("\(record.displayTitle)")
                                 .font(.headline)
                             
                             HStack {
-                                if let cardID = record.cardID, cardID != 0 {
-                                    Text("\(cardID)")
+                                if record.cardID != 0 {
+                                    Text("\(record.cardID)")
                                         .font(.caption)
                                         .padding(4)
                                         .background(Color.blue.opacity(0.1))
@@ -61,7 +61,8 @@ struct HistoryPageView: View {
                     tagContracts: record.contracts,
                     tagEvents: record.events,
                     tagSpecialEvents: record.specialEvents,
-                    exportDataAsJSON: record.exportDataAsJSON
+                    exportDataAsJSON: record.exportDataAsJSON,
+                    historyManager: historyManager
                 )
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {

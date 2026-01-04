@@ -8,19 +8,25 @@
 import SwiftUI
 
 struct ScanView: View {
-    let cardID: Int?
+    let cardID: UInt64
     let tagEnvHolder: [String: Any]
     let tagContracts: [[String: Any]]
     let tagEvents: [[String: Any]]
     let tagSpecialEvents: [[String: Any]]
     var exportDataAsJSON: Data?
     
+    @ObservedObject var historyManager: HistoryManager
+    
+    @State private var showingRenameAlert = false
+    @State private var newNickname = ""
+    @State private var showingImagePicker = false
+    
     var body: some View {
         List {
             Section(header:
                 ZStack(alignment: .bottomLeading) {
                     if let holderCardStatus = getKey(tagEnvHolder, "HolderDataCardStatus"), let holderCommercialId = getKey(tagEnvHolder, "HolderDataCommercialID") {
-                        NavigoImage(passKind: interpretNavigoPersonalizationStatusCode(holderCardStatus, holderCommercialId, tagContracts))
+                        NavigoImage(imageName: historyManager.history.first(where: { $0.cardID == cardID })?.image ?? interpretNavigoImage(holderCardStatus, holderCommercialId, tagContracts))
                             .shadow(radius: 2)
                         VStack(alignment: .leading) {
                             switch interpretNavigoPersonalizationStatusCode(holderCardStatus, holderCommercialId, tagContracts) {
@@ -35,8 +41,8 @@ struct ScanView: View {
                             default:
                                 Spacer(minLength: 0.0)
                             }
-                            if cardID != nil && cardID != 0 {
-                                Text("\(cardID!)")
+                            if cardID != 0 {
+                                Text("\(cardID)")
                                     .fontWeight(.medium)
                                     .foregroundColor(Color.black)
                             }
@@ -112,15 +118,31 @@ struct ScanView: View {
                 }
             }
         }
+        .navigationTitle(cardID != 0 ? historyManager.history.first(where: { $0.cardID == cardID })?.displayTitle ?? "" : "")
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
+                Menu {
+                    Button(action: {
+                        newNickname = historyManager.history.first(where: { $0.cardID == cardID })?.nickname ?? ""
+                        showingRenameAlert = true
+                    }) {
+                        Label("Renommer le pass", systemImage: "pencil")
+                    }
+                    
+                    Button(action: { showingImagePicker = true }) {
+                        Label("Changer l'image", systemImage: "photo.on.rectangle")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+                
                 if !tagEnvHolder.isEmpty, let jsonData = exportDataAsJSON {
                     let dateStr = ISO8601DateFormatter().string(from: Date()).prefix(10)
-                    let fileName = "\(cardID ?? 0)_\(dateStr).metropass"
+                    let fileName = "\(cardID)_\(dateStr).metropass"
                     
                     ShareLink(
                         item: ExportFile(data: jsonData, fileName: fileName),
-                        preview: SharePreview("Données Navigo \(cardID ?? 0)")
+                        preview: SharePreview("Données Navigo \(cardID)")
                     )
                 } else {
                     // Optional: Disabled placeholder so the UI doesn't "jump"
@@ -129,9 +151,21 @@ struct ScanView: View {
                 }
             }
         }
+        .sheet(isPresented: $showingImagePicker) {
+            ImagePickerSheet(cardID: cardID, historyManager: historyManager)
+                .presentationDetents([.medium, .large]) // Permet une ouverture partielle ou totale
+        }
+        .alert("Renommer la carte", isPresented: $showingRenameAlert) {
+            TextField("Nom", text: $newNickname)
+            Button("Annuler", role: .cancel) {}
+            Button("Enregistrer") {
+                historyManager.setNickname(for: cardID, to: newNickname)
+                newNickname = ""
+            }
+        }
     }
 }
 
 #Preview {
-    ScanView(cardID: nil, tagEnvHolder: [:], tagContracts: [], tagEvents: [], tagSpecialEvents: [])
+    ScanView(cardID: 0, tagEnvHolder: [:], tagContracts: [], tagEvents: [], tagSpecialEvents: [], historyManager: HistoryManager())
 }
