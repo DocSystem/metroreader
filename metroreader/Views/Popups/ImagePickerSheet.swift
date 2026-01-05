@@ -19,7 +19,7 @@ struct ImagePickerSheet: View {
         "Navigo Easy Carte", "Navigo Easy SOCS", "Navigo Easy Carte JO",
         "Navigo eSE Apple",
         "Navigo JO", "Navigo JP",
-        "Navigo STIF", "Pass Carmillion", "NavigOpus", "NavigOyster"
+        "Navigo STIF", "NavigOrange", "Pass Carmillion", "NavigOpus", "NavigOyster", "NavigoPassPass"
     ]
     
     let columns = [GridItem(.flexible()), GridItem(.flexible())]

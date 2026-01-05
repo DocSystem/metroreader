@@ -101,6 +101,9 @@ public class NavigoStations {
             if let station = allStations.first(where: { $0.provider_id == 59 && $0.line_id == line_id && $0.location_id == location_id && $0.mode == modeToUse }) {
                 return station
             }
+            else if line_id == 17, let station = allStations.first(where: { $0.provider_id == 59 && $0.line_id == 17 && $0.location_id == (location_id ^ 0x8000) && $0.mode == modeToUse }) {
+                return station
+            }
             else {
                 return allStations.first(where: { $0.provider_id == 59 && $0.location_id == location_id && $0.mode == modeToUse })
             }
