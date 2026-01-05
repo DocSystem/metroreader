@@ -60,6 +60,7 @@ func interpretTimeAsTimeInterval(_ bitstring: String) -> TimeInterval {
 }
 
 func interpretPersonalizationStatusCode(_ bitstring: String) -> (String, Bool, Bool) {
+    if bitstring.isEmpty { return ("Unknown", false, false) }
     let rufBit = String(bitstring.first!) == "1"
     let org = String(bitstring.dropFirst(1).first!) == "1"
     switch Int(String(bitstring.dropFirst(2)), radix: 2) ?? 0 {

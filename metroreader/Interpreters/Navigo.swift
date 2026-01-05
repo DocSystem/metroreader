@@ -238,7 +238,7 @@ func interpretRouteNumber(_ routeNumberBitstring: String, _ eventCodeBitstring: 
     let serviceProviderCode = Int(eventServiceProviderBitstring, radix: 2)!
     
     if (eventTransport == "RER") {
-        if (routeNumber == 16) || (routeNumber == 17) {
+        if (routeNumber == 16) || (routeNumber == 17) || (routeNumber == 26) {
             return "A"
         }
         else if routeNumber == 18 {
