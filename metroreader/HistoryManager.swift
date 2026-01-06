@@ -29,8 +29,6 @@ class HistoryManager: ObservableObject {
             // Mise à jour des infos de base
             existingRecord.date = Date()
             existingRecord.envData = try? JSONSerialization.data(withJSONObject: env)
-            existingRecord.contractsData = try? JSONSerialization.data(withJSONObject: contracts)
-            existingRecord.specialEventsData = try? JSONSerialization.data(withJSONObject: specialEvents)
             
             // Fusion des événements (éviter les doublons)
             let oldEvents = existingRecord.events
