@@ -158,6 +158,8 @@ func interpretTariff(_ bitstring: String, _ contractEndDateBitstring: String) ->
         return "Pass Carmillion"
     case 0x8003:
         return "Navigo Solidarité Gratuit"
+    case 0x8010:
+        return "Pass'Local Versailles"
     default:
         return "Unknown (\(Int(bitstring, radix: 2) ?? 0))"
     }
@@ -298,6 +300,36 @@ func interpretRouteNumber(_ routeNumberBitstring: String, _ eventCodeBitstring: 
     return "\(routeNumber)"
 }
 
+func interpretRoute(_ routeNumberBitstring: String, _ eventCodeBitstring: String, _ eventServiceProviderBitstring: String) -> NavigoLineInfo? {
+    guard let routeNumber = Int(routeNumberBitstring, radix: 2) else {
+        return nil
+    }
+    
+    let eventTransport = interpretEventCode(eventCodeBitstring, isRouteNumberPresent: true, routeNumber: routeNumber).0
+    
+    let serviceProviderCode = Int(eventServiceProviderBitstring, radix: 2)!
+    
+    if (eventTransport == "RER") {
+        if (routeNumber == 16) || (routeNumber == 17) || (routeNumber == 26) {
+            return NavigoLineInfo(name: "A", mode: "RER", public_id: "C01742", provider_id: 3, line_id: 16, background_color: "eb2132", text_color: "ffffff", is_noctilien: false)
+        }
+        else if routeNumber == 18 {
+            return NavigoLineInfo(name: "B", mode: "RER", public_id: "C01743", provider_id: 3, line_id: 18, background_color: "5091cb", text_color: "ffffff", is_noctilien: false)
+        }
+    }
+    else if (eventTransport == "Métro" && routeNumber == 29) {
+        return NavigoLineInfo(name: "Orlyval", mode: "Métro", public_id: "C01388", provider_id: 4, line_id: 29, background_color: "5ec5ed", text_color: "ffffff", is_noctilien: false)
+    }
+    else if var route = NavigoLines.find(serviceProviderCode, routeNumber, eventTransport) {
+        if route.is_noctilien {
+            route.mode = "Noctilien"
+        }
+        return route
+    }
+    
+    return NavigoLineInfo(name: "\(routeNumber)", mode: eventTransport, public_id: "UNK\(routeNumber)", provider_id: 0, line_id: routeNumber, background_color: "c5c5c5", text_color: "000000", is_noctilien: false)
+}
+
 func interpretServiceProvider(_ bitstring: String) -> String {
     switch Int(bitstring, radix: 2) ?? 0 {
     case 2:
@@ -326,14 +358,18 @@ func interpretServiceProvider(_ bitstring: String) -> String {
         return "Phebus";
     case 175:
         return "RATP (Veolia Transport Nanterre)";
+    case 205:
+        return "Transdev Valmy";
     case 221:
         return "Transdev Coteaux de la Marne";
     case 222:
-        return "Keolis Ouest Val-de-Marne"
+        return "Keolis Ouest Val-de-Marne";
+    case 228:
+        return "Transdev Versailles";
     case 230:
-        return "Transdev Sud Yvelines"
+        return "Transdev Sud Yvelines";
     default:
-        return "Unknown (\(Int(bitstring, radix: 2) ?? 0))"
+        return "Unknown (\(Int(bitstring, radix: 2) ?? 0))";
     }
 }
 

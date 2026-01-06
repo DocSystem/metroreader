@@ -7,12 +7,6 @@
 
 import Foundation
 
-public struct NavigoStationInfoLines: Codable {
-    let name: String
-    let mode: String
-    let background_color: String
-    let text_color: String
-}
 
 public struct NavigoStationInfo: Codable {
     let name: String
@@ -22,7 +16,7 @@ public struct NavigoStationInfo: Codable {
     let mode: String
     let lat: Double
     let lon: Double
-    let lines: [NavigoStationInfoLines]
+    let lines: [NavigoLineInfo]
     let found: Bool
     
     enum CodingKeys: String, CodingKey {
@@ -39,7 +33,7 @@ public struct NavigoStationInfo: Codable {
         self.mode = try container.decode(String.self, forKey: .mode)
         self.lat = try container.decode(Double.self, forKey: .lat)
         self.lon = try container.decode(Double.self, forKey: .lon)
-        self.lines = try container.decode([NavigoStationInfoLines].self, forKey: .lines)
+        self.lines = try container.decode([NavigoLineInfo].self, forKey: .lines)
         
         // Default to true when decoding from JSON
         self.found = true

@@ -97,11 +97,10 @@ struct EventView: View {
                         LineIcons(lines: self.eventLocation.lines)
                         
                         HStack(spacing: 0) {
-                            Text("\(self.eventTransportMode)")
-                                .font(.system(size: 18, weight: .medium))
-                                .foregroundColor(.gray)
-                            if let routeName = self.eventRouteName {
-                                Text(" \(routeName)")
+                            if let route = interpretRoute(getKey(eventInfo, "EventRouteNumber") ?? "", getKey(eventInfo, "EventCode") ?? "", getKey(eventInfo, "EventServiceProvider") ?? "") {
+                                LineIcons(lines: [route])
+                            } else {
+                                Text("\(self.eventTransportMode)")
                                     .font(.system(size: 18, weight: .medium))
                                     .foregroundColor(.gray)
                             }
@@ -111,12 +110,10 @@ struct EventView: View {
                         }
                     } else {
                         HStack(spacing: 0) {
-                            Text("\(self.eventTransportMode)")
-                                .font(.largeTitle)
-                                .fontWeight(.bold)
-                            
-                            if let routeName = self.eventRouteName {
-                                Text(" \(routeName)")
+                            if let route = interpretRoute(getKey(eventInfo, "EventRouteNumber") ?? "", getKey(eventInfo, "EventCode") ?? "", getKey(eventInfo, "EventServiceProvider") ?? "") {
+                                LineIcons(lines: [route], size: 50.0)
+                            } else {
+                                Text("\(self.eventTransportMode)")
                                     .font(.largeTitle)
                                     .fontWeight(.bold)
                             }
@@ -197,6 +194,18 @@ struct EventView: View {
                                 .fontWeight(.semibold)
                             Spacer()
                             Text("\(interpretInt(eventVehicleId))")
+                                .fontWeight(.semibold)
+                        }
+                    }
+                    
+                    if let route = interpretRoute(getKey(eventInfo, "EventRouteNumber") ?? "", getKey(eventInfo, "EventCode") ?? "", getKey(eventInfo, "EventServiceProvider") ?? ""), self.eventLocation.lines.contains(where: {$0.line_id == route.line_id && $0.provider_id == route.provider_id}), let routeFromLocation = self.eventLocation.lines.first(where: {$0.line_id == route.line_id && $0.provider_id == route.provider_id}), let direction = routeFromLocation.direction {
+                        Divider()
+                        
+                        HStack {
+                            Text("Direction")
+                                .fontWeight(.semibold)
+                            Spacer()
+                            Text("\(direction)")
                                 .fontWeight(.semibold)
                         }
                     }

@@ -9,14 +9,30 @@
 import SwiftUI
 
 struct LineIcons: View {
-    let lines: [NavigoStationInfoLines]
+    let lines: [NavigoLineInfo]
+    let size: CGFloat
+    
+    init(lines: [NavigoLineInfo], size: CGFloat = 25) {
+        self.lines = lines
+        self.size = size
+    }
     
     // Ordered list of modes to ensure RER always appears before Transilien
-    let modeOrder = ["RER", "Transilien", "Métro", "Tramway"]
+    let modeOrder = ["RER", "Transilien", "Métro", "Tramway", "Bus urbain", "Noctilien"]
     
-    func lines(for mode: String) -> [NavigoStationInfoLines] {
-        lines
+    func lines(for mode: String) -> [NavigoLineInfo] {
+        var seenIDs = Set<String>()
+        
+        return lines
             .filter { $0.mode == mode }
+            .filter { line in
+                if seenIDs.contains(line.public_id) {
+                    return false
+                } else {
+                    seenIDs.insert(line.public_id)
+                    return true
+                }
+            }
             .sorted { $0.name < $1.name }
     }
     
@@ -34,15 +50,16 @@ struct LineIcons: View {
                         .renderingMode(.template)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 25, height: 25)
+                        .frame(width: size, height: size)
                         .foregroundStyle(.primary)
                     
                     ForEach(lines(for: mode), id: \.name) { line in
                         Text(line.name)
-                            .font(.system(size: 16, weight: .bold))
-                            .frame(width: 25, height: 25)
+                            .font(.system(size: 16 * (size / 25), weight: .bold))
+                            .frame(width: line.name.count == 1 ? size : nil, height: size)
+                            .padding(.horizontal, line.name.count > 1 ? (size / 5) : 0)
                             .background(Color(hex: line.background_color))
-                            .cornerRadius(4)
+                            .cornerRadius(line.mode == "Métro" ? size / 2 : 4)
                             .foregroundColor(Color(hex: line.text_color))
                     }
                 }
@@ -57,13 +74,17 @@ struct LineIcons: View {
         switch mode {
         case "RER": return "mode_rer"
         case "Transilien", "Train": return "mode_train"
+        case "Métro": return "mode_metro"
+        case "Tramway": return "mode_tram"
+        case "Bus urbain": return "mode_bus"
+        case "Noctilien": return "mode_noctilien"
         default: return "mode_bus"
         }
     }
 }
 
 #Preview {
-    LineIcons(lines: [NavigoStationInfoLines(name: "D", mode: "RER", background_color: "008b5b", text_color: "ffffff"), NavigoStationInfoLines(name: "A", mode: "RER", background_color: "eb2132", text_color: "ffffff")])
+    LineIcons(lines: [NavigoLineInfo(name: "D", mode: "RER", direction: nil, public_id: "D", provider_id: nil, line_id: nil, background_color: "008b5b", text_color: "ffffff", is_noctilien: false), NavigoLineInfo(name: "A", mode: "RER", direction: nil, public_id: "A", provider_id: nil, line_id: nil, background_color: "eb2132", text_color: "ffffff", is_noctilien: false)])
 }
 
 extension Color {
