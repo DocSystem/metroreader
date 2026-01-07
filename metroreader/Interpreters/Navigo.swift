@@ -26,15 +26,16 @@ func interpretNavigoCommercialId(_ bitstring: String) -> String {
     case 17:
         return "Navigo Easy SOCS"
     case 32:
-        return "Pass Carmillion"
+        return "Carte Interne"
     default:
         return "Unknown (\(Int(bitstring, radix: 2) ?? 0))"
     }
 }
 
-func interpretNavigoImage(_ personalizationStatusBitstring: String, _ commercialIdBitString: String, _ contracts: [[String: Any]]) -> String {
+func interpretNavigoImage(_ personalizationStatusBitstring: String, _ issuerIdBitstring: String, _ commercialIdBitString: String, _ contracts: [[String: Any]]) -> String {
     let (perso, _, _) = interpretPersonalizationStatusCode(personalizationStatusBitstring)
     let commercialName = interpretNavigoCommercialId(commercialIdBitString)
+    let issuer = interpretServiceProvider(issuerIdBitstring)
     
     for contractInfo in contracts {
         if let tariffBitstring = getKey(contractInfo, "ContractTariff") {
@@ -60,7 +61,14 @@ func interpretNavigoImage(_ personalizationStatusBitstring: String, _ commercial
         return "Navigo"
     case "eSE Apple":
         return "Navigo eSE Apple"
-    case "Navigo Easy Carte", "Navigo Easy SOCS", "Pass Carmillion":
+    case "Carte Interne":
+        switch issuer {
+        case "SNCF":
+            return "Pass Carmillion"
+        default:
+            return "Navigo"
+        }
+    case "Navigo Easy Carte", "Navigo Easy SOCS":
         return commercialName
     default:
         switch perso {
@@ -155,7 +163,7 @@ func interpretTariff(_ bitstring: String, _ contractEndDateBitstring: String) ->
     case 0x501b:
         return "Paris <> Aéroports (Réduit)"
     case 0x8001:
-        return "Pass Carmillion"
+        return "Pass Interne"
     case 0x8003:
         return "Navigo Solidarité Gratuit"
     case 0x8010:
@@ -336,7 +344,9 @@ func interpretServiceProvider(_ bitstring: String) -> String {
         return "SNCF";
     case 3:
         return "RATP";
-    case 4, 10:
+    case 4:
+        return "Optile";
+    case 10:
         return "IDF Mobilites";
     case 7:
         return "RATP Cap Bièvre";
@@ -364,6 +374,8 @@ func interpretServiceProvider(_ bitstring: String) -> String {
         return "Transdev Coteaux de la Marne";
     case 222:
         return "Keolis Ouest Val-de-Marne";
+    case 226:
+        return "RC Saclay";
     case 228:
         return "Transdev Versailles";
     case 230:

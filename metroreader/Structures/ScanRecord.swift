@@ -39,7 +39,7 @@ struct ScanRecord: Identifiable, Codable {
         if let imageName = imageName, !imageName.isEmpty {
             return imageName
         }
-        return interpretNavigoImage(getKey(envHolder, "HolderDataCardStatus") ?? "", getKey(envHolder, "HolderDataCommercialID") ?? "", contracts)
+        return interpretNavigoImage(getKey(envHolder, "HolderDataCardStatus") ?? "", getKey(envHolder, "EnvApplicationIssuerId") ?? "", getKey(envHolder, "HolderDataCommercialID") ?? "", contracts)
     }
 
     private func decode(_ data: Data?) -> [String: Any] {

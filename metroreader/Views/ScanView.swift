@@ -76,7 +76,7 @@ struct ScanView: View {
             Section(header:
                 ZStack(alignment: .bottomLeading) {
                     if let holderCardStatus = getKey(tagEnvHolder, "HolderDataCardStatus"), let holderCommercialId = getKey(tagEnvHolder, "HolderDataCommercialID") {
-                        NavigoImage(imageName: historyManager.history.first(where: { $0.cardID == cardID })?.image ?? interpretNavigoImage(holderCardStatus, holderCommercialId, tagContracts))
+                        NavigoImage(imageName: historyManager.history.first(where: { $0.cardID == cardID })?.image ?? interpretNavigoImage(holderCardStatus, getKey(tagEnvHolder, "EnvApplicationIssuerId") ?? "", holderCommercialId, tagContracts))
                             .shadow(radius: 2)
                             .onTapGesture(count: 2) {
                                 showingImagePicker = true

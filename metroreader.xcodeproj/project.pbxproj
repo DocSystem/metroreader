@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A76E3F3A2F0F28B00013E341 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A76E3F392F0F28B00013E341 /* README.md */; };
 		A78CBF142D55495D00ED5BAC /* IsoCountryCodes in Frameworks */ = {isa = PBXBuildFile; productRef = A78CBF132D55495D00ED5BAC /* IsoCountryCodes */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A71A89D52D2437B90070DB78 /* metroreader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = metroreader.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A76E3F392F0F28B00013E341 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -52,6 +54,7 @@
 			children = (
 				A71A89D72D2437B90070DB78 /* metroreader */,
 				A71A89D62D2437B90070DB78 /* Products */,
+				A76E3F392F0F28B00013E341 /* README.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -131,6 +134,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A76E3F3A2F0F28B00013E341 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -277,7 +281,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = metroreader/metroreader.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 32;
+				CURRENT_PROJECT_VERSION = 33;
 				DEVELOPMENT_ASSET_PATHS = "\"metroreader/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -315,7 +319,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = metroreader/metroreader.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 32;
+				CURRENT_PROJECT_VERSION = 33;
 				DEVELOPMENT_ASSET_PATHS = "\"metroreader/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

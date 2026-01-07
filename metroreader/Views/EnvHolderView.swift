@@ -74,6 +74,18 @@ struct EnvHolderView: View {
                 }
             }
             
+            if let issuerId = getKey(envHolderInfo, "EnvApplicationIssuerId"), Int(issuerId, radix: 2) != 0 {
+                Divider()
+                
+                HStack {
+                    Text("Fournisseur")
+                        .fontWeight(.semibold)
+                    Spacer()
+                    Text("\(interpretServiceProvider(issuerId))")
+                        .fontWeight(.semibold)
+                }
+            }
+            
             Divider()
             
             HStack {

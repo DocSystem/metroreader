@@ -87,6 +87,16 @@ struct SettingsPageView: View {
                     Text("\(appVersion) (\(buildNumber))")
                         .foregroundColor(.secondary)
                 }
+                Link(destination: URL(string: "https://github.com/DocSystem/metroreader")!) {
+                    HStack {
+                        Label("GitHub", systemImage: "terminal.fill")
+                            .foregroundColor(.primary)
+                        Spacer()
+                        Image(systemName: "arrow.up.right.circle.fill")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
             }
         }
         .navigationTitle("Réglages")
