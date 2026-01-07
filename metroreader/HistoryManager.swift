@@ -17,7 +17,7 @@ class HistoryManager: ObservableObject {
         loadHistory()
     }
 
-    func saveScan(cardID: UInt64, env: [String: Any], contracts: [[String: Any]], events: [[String: Any]], specialEvents: [[String: Any]]) {
+    func saveScan(cardID: UInt64, icc: String, env: [String: Any], contracts: [[String: Any]], events: [[String: Any]], specialEvents: [[String: Any]]) {
         guard UserDefaults.standard.bool(forKey: isHistoryEnabledKey) else { return }
         
         // 1. Vérifier si la carte existe déjà (si cardID est présent)
@@ -28,6 +28,7 @@ class HistoryManager: ObservableObject {
             
             // Mise à jour des infos de base
             existingRecord.date = Date()
+            existingRecord.iccData = icc
             existingRecord.envData = try? JSONSerialization.data(withJSONObject: env)
             
             // Fusion des événements (éviter les doublons)
@@ -74,6 +75,7 @@ class HistoryManager: ObservableObject {
                 nickname: nil,
                 imageName: nil,
                 cardID: cardID,
+                iccData: icc,
                 envData: try? JSONSerialization.data(withJSONObject: env),
                 contractsData: try? JSONSerialization.data(withJSONObject: contracts),
                 eventsData: try? JSONSerialization.data(withJSONObject: events),

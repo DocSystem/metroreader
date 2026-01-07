@@ -15,11 +15,13 @@ struct ScanRecord: Identifiable, Codable {
     var nickname: String? // Nom personnalisé
     var imageName: String? // Image de pass personnalisée
     let cardID: UInt64
+    var iccData: String?
     var envData: Data?
     var contractsData: Data?
     var eventsData: Data?
     var specialEventsData: Data?
 
+    var icc: String { iccData ?? "" }
     var envHolder: [String: Any] { decode(envData) }
     var contracts: [[String: Any]] { decodeArray(contractsData) }
     var events: [[String: Any]] { decodeArray(eventsData) }
@@ -55,6 +57,7 @@ struct ScanRecord: Identifiable, Codable {
             "cardID": cardID,
             "nickname": nickname ?? "",
             "imageName": imageName ?? "",
+            "icc": icc,
             "envHolder": envHolder,
             "contracts": contracts,
             "events": events,

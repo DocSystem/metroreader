@@ -95,6 +95,7 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
     
     @Published var tagID: String = "Tap 'Scan' to read NFC"
     @Published var cardID: UInt64 = 0
+    @Published var tagIcc: String = ""
     @Published var tagEnvHolder: [String: Any] = [:]
     @Published var tagContracts: [[String: Any]] = []
     @Published var tagMinContractPriority: Int? = nil
@@ -113,6 +114,7 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
         }
         let dict: [String: Any] = [
             "cardID": cardID,
+            "icc": tagIcc,
             "envHolder": tagEnvHolder,
             "contracts": tagContracts,
             "events": tagEvents,
@@ -135,6 +137,7 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
             if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
                 DispatchQueue.main.async {
                     self.cardID = json["cardID"] as? UInt64 ?? 0
+                    self.tagIcc = json["icc"] as? String ?? ""
                     self.tagEnvHolder = json["envHolder"] as? [String: Any] ?? [:]
                     self.tagContracts = json["contracts"] as? [[String: Any]] ?? []
                     self.tagEvents = json["events"] as? [[String: Any]] ?? []
@@ -144,6 +147,7 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
                     
                     self.historyManager?.saveScan(
                         cardID: self.cardID,
+                        icc: self.tagIcc,
                         env: self.tagEnvHolder,
                         contracts: self.tagContracts,
                         events: self.tagEvents,
@@ -194,6 +198,9 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
         var nfcTag: NFCTag? = nil
         
         for tag in tags {
+            if nfcTag == nil {
+                nfcTag = tag
+            }
             if case let .iso7816(cTag) = tag {
                 nfcIso7816Tag = cTag
                 nfcTag = tag
@@ -201,7 +208,7 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
         }
         
         if nfcIso7816Tag == nil {
-            session.invalidate(errorMessage: "Card not supported")
+            session.invalidate(errorMessage: "Card not supported: \(nfcTag.debugDescription)")
             return
         }
         
@@ -224,17 +231,19 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
             DispatchQueue.main.async {
                 Task {
                     do {
-                        let icc = try await selectAID(nfcIso7816Tag, Data([0xA0, 0x00, 0x00, 0x04, 0x04, 0x01, 0x25, 0x09, 0x01, 0x01]))
+                        session.alertMessage = "⚪️⚪️⚪️⚪️⚪️⚪️⚪️"
+                        self.tagIcc = try await selectAID(nfcIso7816Tag, Data([0xA0, 0x00, 0x00, 0x04, 0x04, 0x01, 0x25, 0x09, 0x01, 0x01]))
                         
-                        
-                        let decimalValue = interpretCardID(icc)
+                        let decimalValue = interpretCardID(self.tagIcc)
                         self.tagID = "Card ID: \(decimalValue)"
                         self.cardID = decimalValue
                         
+                        session.alertMessage = "🔵⚪️⚪️⚪️⚪️⚪️⚪️"
                         self.tagEnvHolder = parseStructure(bitstring: try await readRecord(nfcIso7816Tag, 1, 0x07), element: IntercodeEnvHolder).0 as! [String: Any]
                         print(self.tagEnvHolder)
                         
                         // Counters
+                        session.alertMessage = "🔵🔵⚪️⚪️⚪️⚪️⚪️"
                         let countersBitstring = try await readRecord(nfcIso7816Tag, 1, 0x19)
                         var countersBitstrings: [String] = []
                         for i in 0...3 {
@@ -242,12 +251,14 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
                         }
                         
                         // Contract List
+                        session.alertMessage = "🔵🔵🔵⚪️⚪️⚪️⚪️"
                         let contractListContainer = parseStructure(bitstring: try await readRecord(nfcIso7816Tag, 1, 0x1E), element: IntercodeContractList).0 as! [String: Any]
                         let contractList = contractListContainer["ContractList"] as! [[String: Any]]
                         print(contractList)
                         
                         // Contracts
                         // loop 4 times
+                        session.alertMessage = "🔵🔵🔵🔵⚪️⚪️⚪️"
                         for i in 1...4 {
                             do {
                                 print("Reading contract \(i)")
@@ -299,6 +310,7 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
                         
                         // Events
                         // loop 3 times
+                        session.alertMessage = "🔵🔵🔵🔵🔵⚪️⚪️"
                         for i in 1...3 {
                             print("Reading event \(i)")
                             let parsedEvent = parseStructure(bitstring: try await readRecord(nfcIso7816Tag, UInt8(i), 0x08), element: IntercodeEvent).0 as! [String: Any]
@@ -313,6 +325,7 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
                         
                         // Special Events
                         // loop 3 times
+                        session.alertMessage = "🔵🔵🔵🔵🔵🔵⚪️"
                         for i in 1...3 {
                             do {
                                 print("Reading special event \(i)")
@@ -328,12 +341,13 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
                                 print("Failed to read special event in slot \(i)")
                             }
                         }
-                        session.alertMessage = "Votre passe a été lu. Vous pouvez le retirer"
+                        session.alertMessage = "🔵🔵🔵🔵🔵🔵🔵"
                         session.invalidate()
                         
                         // Save the scan to history
                         self.historyManager?.saveScan(
                             cardID: self.cardID,
+                            icc: self.tagIcc,
                             env: self.tagEnvHolder,
                             contracts: self.tagContracts,
                             events: self.tagEvents,

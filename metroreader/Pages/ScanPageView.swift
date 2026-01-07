@@ -16,7 +16,7 @@ struct ScanPageView: View {
     @State private var isImporting = false
     
     var body: some View {
-        ScanView(cardID: nfcReader.cardID, tagEnvHolder: nfcReader.tagEnvHolder, tagContracts: nfcReader.tagContracts, tagEvents: nfcReader.tagEvents, tagSpecialEvents: nfcReader.tagSpecialEvents, exportDataAsJSON: nfcReader.exportDataAsJSON, historyManager: historyManager)
+        ScanView(cardID: nfcReader.cardID, tagIcc: nfcReader.tagIcc, tagEnvHolder: nfcReader.tagEnvHolder, tagContracts: nfcReader.tagContracts, tagEvents: nfcReader.tagEvents, tagSpecialEvents: nfcReader.tagSpecialEvents, exportDataAsJSON: nfcReader.exportDataAsJSON, historyManager: historyManager)
         .navigationTitle("")
         .toolbar {
             ToolbarItemGroup(placement: .topBarLeading) {

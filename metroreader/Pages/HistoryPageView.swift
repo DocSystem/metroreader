@@ -57,6 +57,7 @@ struct HistoryPageView: View {
             NavigationStack {
                 ScanView(
                     cardID: record.cardID,
+                    tagIcc: record.icc,
                     tagEnvHolder: record.envHolder,
                     tagContracts: record.contracts,
                     tagEvents: record.events,

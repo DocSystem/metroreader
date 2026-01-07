@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ScanView: View {
     let cardID: UInt64
+    let tagIcc: String
     let tagEnvHolder: [String: Any]
     let tagContracts: [[String: Any]]
     let tagEvents: [[String: Any]]
@@ -264,5 +265,5 @@ struct ScanView: View {
 }
 
 #Preview {
-    ScanView(cardID: 0, tagEnvHolder: [:], tagContracts: [], tagEvents: [], tagSpecialEvents: [], historyManager: HistoryManager())
+    ScanView(cardID: 0, tagIcc: "", tagEnvHolder: [:], tagContracts: [], tagEvents: [], tagSpecialEvents: [], historyManager: HistoryManager())
 }
