@@ -66,9 +66,15 @@ struct HistoryPageView: View {
                     historyManager: historyManager
                 )
                 .toolbar {
+                    #if os(iOS)
                     ToolbarItem(placement: .topBarLeading) {
                         Button("Fermer") { selectedRecord = nil }
                     }
+                    #else
+                    ToolbarItem {
+                        Button("Fermer") { selectedRecord = nil }
+                    }
+                    #endif
                 }
             }
         }

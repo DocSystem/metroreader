@@ -89,12 +89,20 @@ struct ImagePickerSheet: View {
                 .padding()
             }
             .navigationTitle("Choisir une image")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Fermer") { dismiss() }
                 }
             }
+            #else
+            .toolbar {
+                ToolbarItem {
+                    Button("Fermer") { dismiss() }
+                }
+            }
+            #endif
         }
     }
 }

@@ -208,8 +208,10 @@ struct ScanView: View {
                         .font(.headline)
                         // Détection du double-clic sur le titre
                         .onTapGesture(count: 2) {
+                            #if os(iOS)
                             let impactMed = UIImpactFeedbackGenerator(style: .medium)
                             impactMed.impactOccurred()
+                            #endif
                             
                             newNickname = record?.nickname ?? ""
                             showingRenameAlert = true
@@ -218,6 +220,7 @@ struct ScanView: View {
                 }
             }
             
+            #if os(iOS)
             ToolbarItemGroup(placement: .topBarTrailing) {
                 Menu {
                     Button(action: {
@@ -248,6 +251,38 @@ struct ScanView: View {
                         .opacity(0.5)
                 }
             }
+            #else
+            ToolbarItemGroup {
+                Menu {
+                    Button(action: {
+                        newNickname = historyManager.history.first(where: { $0.cardID == cardID })?.nickname ?? ""
+                        showingRenameAlert = true
+                    }) {
+                        Label("Renommer le pass", systemImage: "pencil")
+                    }
+                    
+                    Button(action: { showingImagePicker = true }) {
+                        Label("Changer l'image", systemImage: "photo.on.rectangle")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+                
+                if !tagEnvHolder.isEmpty, let jsonData = exportDataAsJSON {
+                    let dateStr = ISO8601DateFormatter().string(from: Date()).prefix(10)
+                    let fileName = "\(cardID)_\(dateStr).metropass"
+                    
+                    ShareLink(
+                        item: ExportFile(data: jsonData, fileName: fileName),
+                        preview: SharePreview("Données Navigo \(cardID)")
+                    )
+                } else {
+                    // Optional: Disabled placeholder so the UI doesn't "jump"
+                    Label("Exporter", systemImage: "square.and.arrow.up")
+                        .opacity(0.5)
+                }
+            }
+            #endif
         }
         .sheet(isPresented: $showingImagePicker) {
             ImagePickerSheet(cardID: cardID, historyManager: historyManager)

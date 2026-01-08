@@ -6,8 +6,11 @@
 //
 
 import Foundation
+#if os(iOS)
 import CoreNFC
+#endif
 
+#if os(iOS)
 private func selectAID(_ tag: NFCISO7816Tag, _ aidData: Data) async throws -> String {
     let apdu = NFCISO7816APDU.init(instructionClass: 0x00, instructionCode: 0xA4, p1Parameter: 0x04, p2Parameter: 0x00, data: aidData, expectedResponseLength: -1)
     print("Sending APDU: \(apdu)")
@@ -49,6 +52,7 @@ private func readRecord(_ tag: NFCISO7816Tag, _ recordId: UInt8, _ sfi: UInt8) a
         throw NSError(domain: "Unexpected status word", code: Int(sw1) << 8 | Int(sw2), userInfo: ["sw1": sw1, "sw2": sw2])
     }
 }
+#endif
 
 private func interpretCardID(_ iccBitstring: String) -> UInt64 {
     var bytes = [UInt8]()
@@ -91,8 +95,8 @@ private func interpretCardID(_ iccBitstring: String) -> UInt64 {
     return result
 }
 
+#if os(iOS)
 class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
-    
     @Published var tagID: String = "Tap 'Scan' to read NFC"
     @Published var cardID: UInt64 = 0
     @Published var tagIcc: String = ""
@@ -185,6 +189,7 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
         DispatchQueue.main.async {
             self.tagID = "Tap 'Scan' to read NFC"
             self.cardID = 0
+            self.tagIcc = ""
             self.tagEnvHolder = [:]
             self.tagContracts = []
             self.tagMinContractPriority = nil
@@ -362,3 +367,86 @@ class NFCReader: NSObject, ObservableObject, NFCTagReaderSessionDelegate {
         }
     }
 }
+#else
+class NFCReader: NSObject, ObservableObject {
+    @Published var tagID: String = "Tap 'Scan' to read NFC"
+    @Published var cardID: UInt64 = 0
+    @Published var tagIcc: String = ""
+    @Published var tagEnvHolder: [String: Any] = [:]
+    @Published var tagContracts: [[String: Any]] = []
+    @Published var tagMinContractPriority: Int? = nil
+    @Published var tagEvents: [[String: Any]] = []
+    @Published var tagSpecialEvents: [[String: Any]] = []
+    var historyManager: HistoryManager?
+    
+    var exportDataAsJSON: Data? {
+        if tagContracts.isEmpty && tagEvents.isEmpty && tagSpecialEvents.isEmpty && cardID == 0 {
+            return nil
+        }
+        let dict: [String: Any] = [
+            "cardID": cardID,
+            "icc": tagIcc,
+            "envHolder": tagEnvHolder,
+            "contracts": tagContracts,
+            "events": tagEvents,
+            "specialEvents": tagSpecialEvents
+        ]
+        
+        // Safety check to ensure the dictionary can actually be made into JSON
+        guard JSONSerialization.isValidJSONObject(dict) else {
+            print("Error: Dictionary contains types that are not JSON compatible.")
+            return nil
+        }
+        
+        return try? JSONSerialization.data(withJSONObject: dict, options: [.prettyPrinted])
+    }
+    
+    func importJSON(from data: Data, historyManager: HistoryManager) {
+        self.historyManager = historyManager
+        
+        do {
+            if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                DispatchQueue.main.async {
+                    self.cardID = json["cardID"] as? UInt64 ?? 0
+                    self.tagIcc = json["icc"] as? String ?? ""
+                    self.tagEnvHolder = json["envHolder"] as? [String: Any] ?? [:]
+                    self.tagContracts = json["contracts"] as? [[String: Any]] ?? []
+                    self.tagEvents = json["events"] as? [[String: Any]] ?? []
+                    self.tagSpecialEvents = json["specialEvents"] as? [[String: Any]] ?? []
+                    
+                    self.tagID = "Imported Card: \(self.cardID)"
+                    
+                    self.historyManager?.saveScan(
+                        cardID: self.cardID,
+                        icc: self.tagIcc,
+                        env: self.tagEnvHolder,
+                        contracts: self.tagContracts,
+                        events: self.tagEvents,
+                        specialEvents: self.tagSpecialEvents
+                    )
+                }
+            }
+        } catch {
+            print("Failed to parse imported JSON: \(error)")
+        }
+    }
+    
+    func beginScanning(historyManager: HistoryManager) {
+        tagID = "NFC is not available on this device."
+        return
+    }
+    
+    func clearData() {
+        DispatchQueue.main.async {
+            self.tagID = "Tap 'Scan' to read NFC"
+            self.cardID = 0
+            self.tagIcc = ""
+            self.tagEnvHolder = [:]
+            self.tagContracts = []
+            self.tagMinContractPriority = nil
+            self.tagEvents = []
+            self.tagSpecialEvents = []
+        }
+    }
+}
+#endif

@@ -10,7 +10,9 @@ import SwiftUI
 struct SettingsPageView: View {
     @ObservedObject var historyManager: HistoryManager
     // This stores the preference in the phone's memory automatically
+    #if os(iOS)
     @AppStorage("autoLaunchScan") private var autoLaunchScan = false
+    #endif
     @AppStorage("isHistoryEnabled") private var isHistoryEnabled = false
     
     @State private var showingDeleteAlert = false
@@ -26,9 +28,11 @@ struct SettingsPageView: View {
     var body: some View {
         List {
             Section(header: Text("Comportement")) {
+                #if os(iOS)
                 Toggle(isOn: $autoLaunchScan) {
                     Label("Scan au démarrage", systemImage: "bolt.fill")
                 }
+                #endif
                 
                 Toggle(isOn: $isHistoryEnabled) {
                     Label("Conserver l'historique", systemImage: "clock.arrow.circlepath")

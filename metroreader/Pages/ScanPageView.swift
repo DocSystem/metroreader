@@ -11,14 +11,17 @@ import SwiftUI
 struct ScanPageView: View {
     @ObservedObject var nfcReader: NFCReader
     @ObservedObject var historyManager: HistoryManager
+    #if os(iOS)
     @AppStorage("autoLaunchScan") private var autoLaunchScan = false
     @State private var hasAutoLaunched = false
+    #endif
     @State private var isImporting = false
     
     var body: some View {
         ScanView(cardID: nfcReader.cardID, tagIcc: nfcReader.tagIcc, tagEnvHolder: nfcReader.tagEnvHolder, tagContracts: nfcReader.tagContracts, tagEvents: nfcReader.tagEvents, tagSpecialEvents: nfcReader.tagSpecialEvents, exportDataAsJSON: nfcReader.exportDataAsJSON, historyManager: historyManager)
         .navigationTitle("")
         .toolbar {
+            #if os(iOS)
             ToolbarItemGroup(placement: .topBarLeading) {
                 Button(action: { isImporting = true }) {
                     Image(systemName: "square.and.arrow.down")
@@ -30,6 +33,13 @@ struct ScanPageView: View {
                     Image(systemName: "wave.3.forward")
                 }
             }
+            #else
+            ToolbarItemGroup {
+                Button(action: { isImporting = true }) {
+                    Image(systemName: "square.and.arrow.down")
+                }
+            }
+            #endif
         }
         .fileImporter(
             isPresented: $isImporting,
@@ -51,12 +61,14 @@ struct ScanPageView: View {
                 print("Error picking file: \(error.localizedDescription)")
             }
         }
+        #if os(iOS)
         .onAppear {
             if autoLaunchScan && !hasAutoLaunched {
                 nfcReader.beginScanning(historyManager: historyManager)
                 hasAutoLaunched = true
             }
         }
+        #endif
     }
 }
 

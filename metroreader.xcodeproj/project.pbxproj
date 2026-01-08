@@ -12,17 +12,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A71A89D52D2437B90070DB78 /* metroreader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = metroreader.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A71A89D52D2437B90070DB78 /* PassReader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PassReader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A76E3F392F0F28B00013E341 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		A78EA0F82D405E0B0030A716 /* Exceptions for "metroreader" folder in "metroreader" target */ = {
+		A78EA0F82D405E0B0030A716 /* Exceptions for "metroreader" folder in "PassReader" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = A71A89D42D2437B90070DB78 /* metroreader */;
+			target = A71A89D42D2437B90070DB78 /* PassReader */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -30,7 +30,7 @@
 		A71A89D72D2437B90070DB78 /* metroreader */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				A78EA0F82D405E0B0030A716 /* Exceptions for "metroreader" folder in "metroreader" target */,
+				A78EA0F82D405E0B0030A716 /* Exceptions for "metroreader" folder in "PassReader" target */,
 			);
 			path = metroreader;
 			sourceTree = "<group>";
@@ -61,7 +61,7 @@
 		A71A89D62D2437B90070DB78 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A71A89D52D2437B90070DB78 /* metroreader.app */,
+				A71A89D52D2437B90070DB78 /* PassReader.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -69,9 +69,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A71A89D42D2437B90070DB78 /* metroreader */ = {
+		A71A89D42D2437B90070DB78 /* PassReader */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A71A89E32D2437BA0070DB78 /* Build configuration list for PBXNativeTarget "metroreader" */;
+			buildConfigurationList = A71A89E32D2437BA0070DB78 /* Build configuration list for PBXNativeTarget "PassReader" */;
 			buildPhases = (
 				A71A89D12D2437B90070DB78 /* Sources */,
 				A71A89D22D2437B90070DB78 /* Frameworks */,
@@ -84,12 +84,12 @@
 			fileSystemSynchronizedGroups = (
 				A71A89D72D2437B90070DB78 /* metroreader */,
 			);
-			name = metroreader;
+			name = PassReader;
 			packageProductDependencies = (
 				A78CBF132D55495D00ED5BAC /* IsoCountryCodes */,
 			);
 			productName = metroreader;
-			productReference = A71A89D52D2437B90070DB78 /* metroreader.app */;
+			productReference = A71A89D52D2437B90070DB78 /* PassReader.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -99,7 +99,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1620;
+				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					A71A89D42D2437B90070DB78 = {
@@ -124,7 +124,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A71A89D42D2437B90070DB78 /* metroreader */,
+				A71A89D42D2437B90070DB78 /* PassReader */,
 			);
 		};
 /* End PBXProject section */
@@ -277,12 +277,16 @@
 		A71A89E42D2437BA0070DB78 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = PassReaderIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = metroreader/metroreader.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 34;
 				DEVELOPMENT_ASSET_PATHS = "\"metroreader/Preview Content\"";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = metroreader/Info.plist;
@@ -302,7 +306,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = xyz.docsystem.metroreader;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				REGISTER_APP_GROUPS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -315,12 +320,16 @@
 		A71A89E52D2437BA0070DB78 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = PassReaderIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = metroreader/metroreader.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 34;
 				DEVELOPMENT_ASSET_PATHS = "\"metroreader/Preview Content\"";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = metroreader/Info.plist;
@@ -340,7 +349,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = xyz.docsystem.metroreader;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				REGISTER_APP_GROUPS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -362,7 +372,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A71A89E32D2437BA0070DB78 /* Build configuration list for PBXNativeTarget "metroreader" */ = {
+		A71A89E32D2437BA0070DB78 /* Build configuration list for PBXNativeTarget "PassReader" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A71A89E42D2437BA0070DB78 /* Debug */,
