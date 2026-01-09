@@ -15,14 +15,16 @@ struct ImagePickerSheet: View {
     
     // Liste des images disponibles dans vos Assets
     let availableImages: [String: [String]] = [
-        "Pass Originaux": ["Navigo", "Navigo Découverte", "Navigo Easy Carte", "Navigo Easy SOCS", "Navigo eSE Apple"],
-        "Pass Événementiels": ["Navigo Easy Carte JO", "Navigo JO", "Navigo JP"],
+        "Pass Originaux": ["Navigo", "Navigo Découverte", "Navigo Easy Carte", "Navigo Easy SOCS", "Navigo eSE Apple", "Carte ScolR"],
+        "Pass Événementiels": ["Navigo Easy Carte JO", "Navigo JO Vert", "Navigo JO Jaune", "Navigo JO Rouge", "Navigo JO Bleu", "Navigo JO Noir", "Navigo JO", "Navigo JP"],
         "Pass Historiques": ["Navigo STIF", "NavigOrange"],
         "Pass Réseaux Externes": ["NavigOpus", "NavigOyster", "NavigoPassPass", "NavigAura"],
-        "Pass Spéciaux": ["Pass Carmillion", "Navigo Anti-Pollution", "Ticket T+"]
+        "Pass Spéciaux": ["Navigo Anti-Pollution", "Ticket T+"],
+        "Pass Entreprise": ["Pass Carmillion", "Pass Optile"],
+        "Pass Ligne": ["C1", "M15", "RER B", "Grand Paris Express"]
     ]
     
-    let categories: [String] = ["Pass Originaux", "Pass Événementiels", "Pass Historiques", "Pass Réseaux Externes", "Pass Spéciaux"]
+    let categories: [String] = ["Pass Originaux", "Pass Événementiels", "Pass Historiques", "Pass Réseaux Externes", "Pass Spéciaux", "Pass Entreprise", "Pass Ligne"]
     
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
 

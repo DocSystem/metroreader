@@ -65,6 +65,8 @@ func interpretNavigoImage(_ personalizationStatusBitstring: String, _ issuerIdBi
         switch issuer {
         case "SNCF":
             return "Pass Carmillion"
+        case "Optile":
+            return "Pass Optile"
         default:
             return "Navigo"
         }
